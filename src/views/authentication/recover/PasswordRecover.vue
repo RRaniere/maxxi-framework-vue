@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AuthForgotPwd from './PasswordRecoverForm.vue';
 
 import leftImg from '@/assets/images/auth/img-auth-sideimg.png';
 </script>

@@ -5,9 +5,10 @@
     "ignoreDeprecations": "5.0",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"]
     },
-    "allowJs": true
+    "allowJs": true,
+    "types": ["node", "vite/client"]
   },
 
   "references": [

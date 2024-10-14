@@ -29,11 +29,6 @@ const AuthRoutes = {
         }
       ]
     },
-    {
-      name: 'Code Verification',
-      path: '/code-verification',
-      component: () => import('@/views/authentication/login/CodeVerification.vue')
-    },
   ]
 };
 

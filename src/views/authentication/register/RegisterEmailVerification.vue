@@ -112,7 +112,7 @@ watch(otp, clearMessages);
                   height="46">
                 </v-otp-input>
 
-                <MessageDisplay 
+                <MessageDisplay class="mb-4"
                   :errorMessage="errors.error" 
                   :infoMessage="infos.info" 
                 />
