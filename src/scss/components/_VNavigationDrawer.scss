@@ -1,0 +1,9 @@
+.v-navigation-drawer__scrim.fade-transition-leave-to {
+  display: none;
+}
+
+.customizer-panel.v-navigation-drawer--active {
+  ~ .message-drawer {
+    transition-duration: unset !important;
+  }
+}

@@ -1,0 +1,62 @@
+.headerWithBtn {
+  .v-card-item {
+    padding: 14px;
+  }
+}
+
+.widget-gradient {
+  position: relative;
+  &::before,
+  &::after {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.0001) 22.07%, rgba(255, 255, 255, 0.15) 83.21%);
+    transform: matrix(0.9, 0.44, -0.44, 0.9, 0, 0);
+  }
+  &:after {
+    top: 50%;
+    right: -20px;
+  }
+  &::before {
+    right: -70px;
+    bottom: 80%;
+  }
+}
+.hover-icon-card {
+  .hover-icon {
+    transition: 0.5s;
+  }
+  &:hover {
+    .hover-icon {
+      opacity: 1;
+      transform: scale(1.1);
+      transition: 0.5s;
+    }
+  }
+}
+.radial-widget {
+  margin: -8px -10px -34px;
+  [dir='rtl'] & {
+    margin-right: -43px;
+    margin-left: 20px;
+  }
+}
+.apexchart-center {
+  .apexcharts-canvas {
+    margin: 0 auto;
+  }
+}
+
+.vue-apexcharts {
+  [dir='rtl'] & {
+    direction: ltr;
+  }
+}
+
+.overview-chart {
+  [dir='rtl'] & {
+    margin-left: 40px;
+  }
+}

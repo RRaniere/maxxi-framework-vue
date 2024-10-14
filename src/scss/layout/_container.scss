@@ -1,0 +1,290 @@
+html {
+  overflow-y: auto;
+}
+.horizontalLayout {
+  .page-wrapper {
+    .v-container {
+      padding-top: 20px;
+    }
+  }
+}
+@media (min-width: 1540px) {
+  .v-container:not(.v-container--fluid) {
+    max-width: 1500px;
+  }
+}
+
+.spacer {
+  padding: 100px 0;
+  @media (max-width: 1264px) {
+    padding: 72px 0;
+  }
+}
+@media (max-width: 800px) {
+  .spacer {
+    padding: 50px 0;
+  }
+}
+.page-wrapper {
+  background: rgb(var(--v-theme-containerBg));
+}
+
+.page-wrapper {
+  .v-container {
+    padding: 16px;
+    &:first-child {
+      min-height: calc(100vh - 139px);
+    }
+    @media (max-width: 1550px) {
+      max-width: 100%;
+    }
+    @media (min-width: 1024px) {
+      padding-inline: 48px;
+    }
+    @media (min-width: 768px) {
+      padding-inline: 40px;
+    }
+  }
+}
+.maxWidth {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+$sizes: (
+  'display-1': 44px,
+  'display-2': 40px,
+  'display-3': 30px,
+  'h1': 36px,
+  'h2': 30px,
+  'h3': 21px,
+  'h4': 18px,
+  'h5': 16px,
+  'h6': 14px,
+  'text-8': 8px,
+  'text-10': 10px,
+  'text-13': 13px,
+  'text-18': 18px,
+  'text-20': 20px,
+  'text-24': 24px,
+  'body-text-1': 10px
+);
+
+@each $pixel, $size in $sizes {
+  .#{$pixel} {
+    font-size: $size;
+    line-height: $size + 10;
+  }
+}
+
+// border
+.border-sm-right {
+  @media (min-width: 600px) {
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+    [dir='rtl'] & {
+      border-left: 1px solid rgba(0, 0, 0, 0.12);
+      border-right: unset;
+    }
+  }
+}
+.border-bottom {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+.themeDefault,
+.themeDarkDefault,
+.themeLightTheme1,
+.themeDark1,
+.themeLightTheme2,
+.themeDark2,
+.themeLightTheme3,
+.themeDark3,
+.themeLightTheme4,
+.themeDark4,
+.themeLightTheme5,
+.themeDark5,
+.themeLightTheme6,
+.themeDark6,
+.themeLightTheme7,
+.themeDark7,
+.themeLightTheme8,
+.themeDark8 {
+  border-width: 4px;
+  border-style: solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.themeDefault,
+.themeDarkDefault {
+  border-color: #4680ff;
+  background-color: #4680ff;
+  &:hover {
+    border-color: #2f63ff;
+  }
+}
+.themeLightTheme1,
+.themeDark1 {
+  border-color: #3366ff;
+  background-color: #3366ff;
+  &:hover {
+    border-color: #3b60d1;
+  }
+}
+
+.themeLightTheme2,
+.themeDark2 {
+  border-color: #7265e6;
+  background-color: #7265e6;
+  &:hover {
+    border-color: #635ab7;
+  }
+}
+.themeLightTheme3,
+.themeDark3 {
+  border-color: #068e44;
+  background-color: #068e44;
+  &:hover {
+    border-color: #0d763d;
+  }
+}
+
+.themeLightTheme4,
+.themeDark4 {
+  border-color: #3c64d0;
+  background-color: #3c64d0;
+  &:hover {
+    border-color: #3654a5;
+  }
+}
+
+.themeLightTheme5,
+.themeDark5 {
+  border-color: #f27013;
+  background-color: #f27013;
+  &:hover {
+    border-color: #d1661a;
+  }
+}
+
+.themeLightTheme6,
+.themeDark6 {
+  border-color: #2aa1af;
+  background-color: #2aa1af;
+  &:hover {
+    border-color: #26929f;
+  }
+}
+
+.themeLightTheme7,
+.themeDark7 {
+  border-color: #00a854;
+  background-color: #00a854;
+  &:hover {
+    border-color: #038f49;
+  }
+}
+
+.themeLightTheme8,
+.themeDark8 {
+  border-color: #009688;
+  background-color: #009688;
+  &:hover {
+    border-color: #028377;
+  }
+}
+
+.Selected {
+  .themeDefault,
+  .themeDarkDefault {
+    border-color: #2f63ff;
+  }
+  .themeLightTheme1,
+  .themeDark1 {
+    border-color: #3b60d1;
+  }
+
+  .themeLightTheme2,
+  .themeDark2 {
+    border-color: #635ab7;
+  }
+  .themeLightTheme3,
+  .themeDark3 {
+    border-color: #0d763d;
+  }
+
+  .themeLightTheme4,
+  .themeDark4 {
+    border-color: #3654a5;
+  }
+
+  .themeLightTheme5,
+  .themeDark5 {
+    border-color: #d1661a;
+  }
+
+  .themeLightTheme6,
+  .themeDark6 {
+    border-color: #26929f;
+  }
+
+  .themeLightTheme7,
+  .themeDark7 {
+    border-color: #038f49;
+  }
+
+  .themeLightTheme8,
+  .themeDark8 {
+    border-color: #028377;
+  }
+}
+
+// font family
+
+body {
+  font-family: $body-font-family;
+  font-feature-settings: 'salt';
+  .Roboto {
+    font-family: 'Roboto', sans-serif !important;
+  }
+
+  .Poppins {
+    font-family: 'Poppins', sans-serif !important;
+  }
+
+  .Inter {
+    font-family: 'Inter', sans-serif !important;
+  }
+
+  .Inter-var {
+    font-family: Inter var !important;
+  }
+
+  .Public {
+    font-family: 'Public sans', sans-serif !important;
+  }
+}
+
+@keyframes slideY {
+  0%,
+  50%,
+  100% {
+    transform: translateY(0px);
+  }
+  25% {
+    transform: translateY(-10px);
+  }
+  75% {
+    transform: translateY(10px);
+  }
+}
+
+.opacity-50 {
+  opacity: 0.5;
+}
+.link {
+  color: rgb(var(--v-theme-lightText));
+  text-decoration: none;
+  &:hover {
+    color: rgb(var(--v-theme-primary));
+  }
+}
