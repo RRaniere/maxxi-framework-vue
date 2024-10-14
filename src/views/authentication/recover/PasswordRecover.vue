@@ -15,16 +15,9 @@ import leftImg from '@/assets/images/auth/img-auth-sideimg.png';
         <div class="d-flex align-center justify-center" style="min-height: calc(100vh - 148px)">
           <v-row justify="center">
             <v-col cols="12" lg="12">
-              <div class="pa-sm-10 pa-4 loginBox">
-                <div class="d-flex justify-space-between align-center">
-                  <h3 class="text-h3 text-center mb-0">Forgot Password</h3>
-                  <router-link to="/login" class="text-primary text-decoration-none">Back to Login</router-link>
-                </div>
 
-                <!---Forgot pwd Form-->
-                <AuthForgotPwd />
-                <!---Forgot pwd Form-->
-              </div>
+              <router-view /> <!-- Exibe PasswordRecoverForm ou PasswordResetForm baseado na rota -->
+
             </v-col>
           </v-row>
         </div>

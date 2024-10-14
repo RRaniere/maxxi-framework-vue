@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRegisterStore } from '@/stores/registerStore';
 import SuccessWithLoader from '@/components/buttons/SuccessWithLoader.vue';
-import { verifyRegisterData, requestEmailVerification } from '@/services/registerService'; // Importar o service
+import MessageDisplay from '@/components/shared/MessageDisplay.vue'; 
+import { verifyRegisterData, requestEmailVerification } from '@/services/registerService'; 
 
-// Definir eventos emitidos
 const emit = defineEmits(['emailRequested']);
 
-// Acessar a store de registro
 const registerStore = useRegisterStore();
 
 // Definir estados
@@ -25,15 +24,6 @@ const emailRequested = ref(false);
 const errors = ref<{ error?: string }>({});
 
 // Definir validações
-const passwordRules = ref([
-  (v: string) => !!v || 'Password is required',
-  (v: string) => (v && v.length >= 8) || 'Password must be greater than 8 characters',
-]);
-
-const confirmPasswordRules = ref([
-  (v: string) => !!v || 'Password confirmation is required',
-  (v: string) => v === password.value || 'Passwords must match',
-]);
 
 const firstRules = ref([(v: string) => !!v || 'First Name is required']);
 const lastRules = ref([(v: string) => !!v || 'Last Name is required']);
@@ -44,7 +34,24 @@ const emailRules = ref([
   (v: string) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
 ]);
 
-// Computed para verificar se o formulário é válido
+const passwordRules = ref([
+  (v: string) => !!v || 'Password is required',
+  (v: string) => (v && v.length >= 8) || 'Password must be greater than 8 characters',
+]);
+
+const confirmPasswordRules = ref([
+  (v: string) => !!v || 'Password confirmation is required',
+  (v: string) => v === password.value || 'Passwords must match',
+]);
+
+
+watch(password, () => {
+  confirmPasswordRules.value = [
+    (v: string) => !!v || 'Password confirmation is required',
+    (v: string) => v === password.value || 'Passwords must match',
+  ];
+});
+
 const isFormValid = computed(() => {
   return (
     agreeToTerms.value &&
@@ -52,18 +59,19 @@ const isFormValid = computed(() => {
     sponsor.value &&
     password.value &&
     confirmPassword.value &&
+    confirmPassword.value == password.value &&
     email.value &&
     firstname.value &&
     lastname.value
   );
 });
 
-// Função que lida com o carregamento
+
 async function loading() {
 
   isLoaded.value = false;
   isLoading.value = true;
-
+  
   try {
     await submit();
   } catch (error: any) {
@@ -81,7 +89,6 @@ function loaded() {
   }
 }
 
-// Função de envio dos dados do formulário
 async function submit() {
   const userData = {
     username: username.value,
@@ -92,11 +99,10 @@ async function submit() {
     lastname: lastname.value,
   };
 
-  // Atualizar a store com os dados do usuário
   registerStore.setUserData(userData);
 
   try {
-    const response = await verifyRegisterData(userData); // Usar o service
+    const response = await verifyRegisterData(userData);
     if (response.status) {
       await handleEmailVerification(userData);
     } else {
@@ -107,10 +113,9 @@ async function submit() {
   }
 }
 
-// Função para solicitar a verificação do e-mail
 async function handleEmailVerification(userData: any) {
   try {
-    const response = await requestEmailVerification(userData); // Usar o service
+    const response = await requestEmailVerification(userData); 
     if (response.status) {
       emailRequested.value = true;
     } else {
@@ -123,8 +128,6 @@ async function handleEmailVerification(userData: any) {
 </script>
 
 <template>
-
-
 
   <div class="d-flex align-center justify-center" style="min-height: calc(100vh - 148px)">
     <v-row justify="center">
@@ -224,10 +227,10 @@ async function handleEmailVerification(userData: any) {
               </v-col>
             </v-row>
 
-            <div v-if="errors.error && isLoaded" class="mt-4">
-              <v-alert color="error">{{ errors.error }}</v-alert>
-            </div>
-
+            <MessageDisplay  v-if="isLoaded" class="mt-4 mb-0"
+              :errorMessage="errors.error" 
+            />
+            
             <div class="d-sm-inline-flex align-center mt-2 mb-0 mb-sm-0 font-weight-bold">
               <v-checkbox color="primary" name="agreeToTerms" :label="'I agree to all the Terms & Conditions'"  v-model="agreeToTerms" />
             </div>
