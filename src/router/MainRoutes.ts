@@ -11,6 +11,11 @@ const MainRoutes = {
       path: '/dashboard',
       component: () => import('@/views/dashboards/Dashboard.vue')
     },
+    {
+      name: 'Network',
+      path: '/network',
+      component: () => import('@/views/network/Network.vue')
+    },
   ]
 };
 

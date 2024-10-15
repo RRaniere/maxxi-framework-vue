@@ -28,7 +28,7 @@ const props = defineProps({
                 </div>
               </template>
               <template v-slot:prepend>
-                <router-link to="/" class="text-darkText text-h6 text-decoration-none"> Home </router-link>
+                <router-link to="/dashboard" class="text-darkText text-h6 text-decoration-none"> Dashboard </router-link>
                 <div class="d-flex align-center px-2">
                   <SvgSprite name="custom-chevron-outline" style="width: 12px; height: 12px" />
                 </div>

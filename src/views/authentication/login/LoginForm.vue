@@ -13,8 +13,7 @@ const passwordRules = ref([
   (v: string) => !!v || 'Password is required',
 ]);
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-function validate(values: any, { setErrors }: any) {
+async function validate(values: any, { setErrors }: any) {
   const authStore = useAuthStore();
   return authStore.login(username.value, password.value).catch((error) => setErrors({ apiError: error }));
 }

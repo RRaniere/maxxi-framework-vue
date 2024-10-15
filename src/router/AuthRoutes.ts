@@ -20,11 +20,11 @@ const AuthRoutes = {
       component: () => import('@/views/authentication/recover/PasswordRecover.vue'), 
       children: [
         {
-          path: '', // Default path: /password-recover
+          path: '', 
           component: () => import('@/views/authentication/recover/PasswordRecoverForm.vue') 
         },
         {
-          path: ':token', // Path com hash dinâmico: /password-recover/:hash
+          path: ':token', 
           component: () => import('@/views/authentication/recover/PasswordResetForm.vue') 
         }
       ]

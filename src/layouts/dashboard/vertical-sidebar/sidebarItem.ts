@@ -22,6 +22,11 @@ const sidebarItem: menu[] = [
     icon: 'custom-home-trend',
     to: '/dashboard',
   },
+  {
+    title: 'Network',
+    icon: 'custom-users',
+    to: '/network',
+  },
 ];
 
 export default sidebarItem;

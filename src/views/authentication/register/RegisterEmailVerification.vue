@@ -30,7 +30,6 @@ function clearMessages() {
   infos.value = {};
 }
 
-// Função para enviar o formulário de verificação
 async function submit() {
   clearMessages(); 
 
@@ -44,7 +43,7 @@ async function submit() {
       handleError(response.data.message);
     }
   } catch (error) {
-    handleError(error);
+    handleError('Something went wrong, try again');
   }
 }
 

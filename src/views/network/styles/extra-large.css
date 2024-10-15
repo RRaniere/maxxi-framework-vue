@@ -1,0 +1,19 @@
+@media only screen and (min-width: 1920px) {
+    .tree ul {
+        padding-top: 50px;
+    }
+
+    .tree li {
+        padding: 50px 5px 0px 0px;
+    }
+
+    .tree li a {
+        width: 100px;
+        height: 100px;
+    }
+
+    .level-5 {
+        width: 80px !important;
+        height: 80px !important;
+    }
+}

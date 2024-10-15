@@ -7,7 +7,6 @@ import VerticalSidebarVue from './vertical-sidebar/VerticalSidebar.vue';
 import VerticalHeaderVue from './vertical-header/VerticalHeader.vue';
 import HorizontalHeader from './horizontal-header/HorizontalHeader.vue';
 import HorizontalSidebar from './horizontal-sidebar/HorizontalSidebar.vue';
-import FooterPanel from './footer/FooterPanel.vue';
 import { useCustomizerStore } from '../../stores/customizer';
 import { DirAttrSet, HexToRgb } from '@/utils/utils';
 const customizer = useCustomizerStore();
@@ -70,11 +69,7 @@ const getStyleObject = () => {
             <RouterView />
           </div>
         </v-container>
-        <v-container fluid class="pt-0">
-          <div :class="customizer.boxed ? 'maxWidth' : ''">
-            <FooterPanel />
-          </div>
-        </v-container>
+       
       </v-main>
     </v-app>
   </v-locale-provider>

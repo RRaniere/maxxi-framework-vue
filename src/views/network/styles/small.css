@@ -1,0 +1,25 @@
+@media only screen and (min-width: 600px) and (max-width: 960px) {
+    .tree ul {
+        padding-top: 50px;
+    }
+
+    .tree li {
+        padding: 50px 5px 0px 0px;
+    }
+
+    li:has(+ li > a.level-5) {
+        display: none;
+    }
+    .tree li a {
+        width: 60px;
+        height: 60px;
+    }
+
+    .mate-container-level-5 {
+        display: none !important;
+     }
+
+    .level-5 {
+       display: none !important;
+    }
+}

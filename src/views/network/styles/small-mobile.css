@@ -1,0 +1,25 @@
+@media only screen and (max-width: 399px) {
+    .tree ul {
+        padding-top: 50px;
+    }
+
+    .tree li {
+        padding: 50px 5px 0px 0px;
+    }
+
+    li:has(+ li > a.level-5) {
+        display: none;
+    }
+    .tree li a {
+        width: 30px;
+        height: 30px;
+    }
+
+    .mate-container-level-5 {
+        display: none !important;
+     }
+
+    .level-5 {
+       display: none !important;
+    }
+}

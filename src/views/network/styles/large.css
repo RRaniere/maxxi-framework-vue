@@ -1,0 +1,19 @@
+@media only screen and (min-width: 1280px) and (max-width: 1439px) {
+    .tree ul {
+        padding-top: 50px;
+    }
+
+    .tree li {
+        padding: 50px 5px 0px 0px;
+    }
+
+    .tree li a {
+        width: 70px;
+        height: 70px;
+    }
+
+    .level-5 {
+        width: 45px !important;
+        height: 45px !important;
+    }
+}

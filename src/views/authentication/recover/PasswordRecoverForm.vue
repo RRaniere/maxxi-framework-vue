@@ -4,14 +4,13 @@ import { requestRecover } from '@/services/passwordRecover';
 import SuccessWithLoader from '@/components/buttons/SuccessWithLoader.vue';
 
 const valid = ref(false);
-const emailSent = ref(false); // Estado para controlar se o email foi enviado
+const emailSent = ref(false); 
 const isLoading = ref(false);
 const isLoaded = ref(false);
 const logform = ref();
 const username = ref('');
 const usernameRules = ref([(v: string) => !!v || 'Username is required']);
 
-// Função para validar o formulário e enviar a solicitação
 async function validate() {
   logform.value.validate();
 
@@ -19,7 +18,7 @@ async function validate() {
     const response = await requestRecover(username.value);
 
     if (response.status === true) {
-      emailSent.value = true; // Exibe a mensagem de confirmação
+      emailSent.value = true; 
     }
   }
 

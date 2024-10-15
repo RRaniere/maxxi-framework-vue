@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'; // Importa 'ref' para declarar estados reativos
-import Logo from '@/layouts/dashboard/logo/LogoMain.vue';
+import { ref } from 'vue';
 import RegisterForm from './RegisterForm.vue';
 import RegisterSuccess from './RegisterSuccess.vue';
 import RegisterEmailVerification from './RegisterEmailVerification.vue';
@@ -17,7 +16,7 @@ const handleEmailRequested = () => {
 
 const handleSuccess = () => {
   registrationSuccess.value = true;
-  emailRequested.value = false; // Oculta a página de verificação de e-mail quando o registro for bem-sucedido
+  emailRequested.value = false; 
 };
 </script>
 
