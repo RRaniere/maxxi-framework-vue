@@ -26,26 +26,28 @@ function request(method: string) {
     };
     if (body) {
       requestOptions.headers['Content-Type'] = 'application/json';
+      requestOptions.headers['Accept'] = 'application/json';
       requestOptions.body = JSON.stringify(body);
     }
-    return fetch(url, requestOptions).then(handleResponse);
+    return fetch(import.meta.env.VITE_API_URL + url, requestOptions).then(handleResponse);
   };
 }
 
 
 function authHeader(url: string): Record<string, string> {
+
   // return auth header with jwt if user is logged in and request is to the api url
   const { user } = useAuthStore();
   const isLoggedIn = !!user?.token;
-  const isApiUrl = url.startsWith(import.meta.env.VITE_API_URL);
-  if (isLoggedIn && isApiUrl) {
+
+  if (isLoggedIn) {
     return { Authorization: `Bearer ${user.token}` };
   } else {
     return {};
   }
 }
 
-function handleResponse(response: Response): Promise<UserData> {
+function handleResponse(response: Response) {
   return response.text().then((text: string) => {
     const data = text && JSON.parse(text);
 
@@ -61,6 +63,6 @@ function handleResponse(response: Response): Promise<UserData> {
     }
 
     // Ensure data is of type UserData
-    return data as UserData;
+    return data;
   });
 }

@@ -13,10 +13,12 @@ const MainRoutes = {
     },
     {
       name: 'Network',
-      path: '/network',
-      component: () => import('@/views/network/Network.vue')
-    },
+      path: '/network/:username?', 
+      component: () => import('@/views/network/Network.vue'),
+      props: true 
+    }
   ]
 };
+
 
 export default MainRoutes;

@@ -1,75 +1,63 @@
-<template>
-    <div :class="['node-container', { 'level-4-node': node.level >= 4 }]">
-      <div class="node">{{ node.id }}</div>
-      <div class="children" v-if="node.left && node.right">
-        <Node :node="node.left" />
-        <Node :node="node.right" />
-      </div>
+<script setup lang="ts">
+
+import { defineProps } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore();
+
+const emit = defineEmits(['search']);
+
+const props = defineProps({
+  root: Boolean || false,
+  username: String || null,
+  parentUsername: String || null,
+  sponsorUsername: String || null,
+  level: Number || null,
+  position: Number || null,
+  status: String || null,
+});
+
+
+
+function handleClick() {
+
+    if(props.username == authStore.user.user.username) { 
+        return false
+    }
+
+    if(!props.root) { 
+        emit('search', props.username);
+    }else if(props.root && props.parentUsername){ 
+        emit('search', props.parentUsername);
+    }else{
+        emit('search', props.username);
+    }
+
+}
+
+</script>
+
+<template> 
+
+<a @click="handleClick"> 
+
+    <div class="name text-center" >
+        <p>{{ props.username }}</p>
     </div>
-  </template>
-  
-  <script setup lang="ts">
-  import { defineProps } from 'vue';
-  import Node from './Node.vue';
 
-  
-  interface Node {
-    id: number;
-    level: number;
-    left?: Node;
-    right?: Node;
-  }
-  
-  const props = defineProps<{ node: Node }>();
-  </script>
-  
-  <style scoped>
-  .node-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 50px;
-  }
+</a>
 
-  .level-4-node {
-    padding: 10px;
-  }
+</template>
 
-  .node {
-    width: 80px;
-    height: 80px;
-    background-color: rgb(var(--v-theme-surface)) !important;
-    border: 1px solid rgba(var(--v-theme-primary), 0.8) !important;
-    border-radius: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+<style>
+
+.name { 
+    font-size: 12px;
     color: white;
-    font-weight: bold;
-  }
-  
-  .children {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-
-  }
-  
-  .children::before,
-  .children::after {
-    content: '';
-    border-top: 2px solid black;
-    width: 50%;
     position: absolute;
-    top: 25px;
-  }
-  
-  .children::before {
-    left: 0;
-  }
-  
-  .children::after {
-    right: 0;
-  }
-  </style>
-  
+    margin-top: -20px;
+    margin-left: -20px;
+    width: 100px;
+}
+
+</style>

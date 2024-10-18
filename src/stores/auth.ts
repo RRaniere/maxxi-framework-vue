@@ -2,7 +2,6 @@ import { defineStore } from 'pinia';
 import { router } from '@/router';
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
 
-const baseUrl = `${import.meta.env.VITE_API_URL}`;
 
 export const useAuthStore = defineStore({
   id: 'auth',
@@ -16,7 +15,7 @@ export const useAuthStore = defineStore({
   actions: {
     async login(username: string, password: string) {
 
-      const user = await fetchWrapper.post(`${baseUrl}/login`, { username, password });
+      const user = await fetchWrapper.post(`/login`, { username, password });
       // update pinia state
       this.user = user;
       // store user details and jwt in local storage to keep user logged in between page refreshes
@@ -26,7 +25,7 @@ export const useAuthStore = defineStore({
     },
     async logout() {
 
-      const logout = await fetchWrapper.post(`${baseUrl}/logout`);
+      const logout = await fetchWrapper.post(`/logout`);
 
       this.user = null;
       localStorage.removeItem('user');

@@ -32,10 +32,6 @@
   </script>
   
   <style scoped>
-  .tree {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
+ 
   </style>
   
