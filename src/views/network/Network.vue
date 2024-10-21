@@ -3,59 +3,61 @@ import { useAuthStore } from '@/stores/auth';
 import { ref, shallowRef, onMounted, defineProps } from 'vue';
 import BaseBreadcrumb from '@/components/shared/BaseBreadcrumb.vue';
 import Node from '@/views/network/Node.vue';
-import { fetchNetwork } from '@/services/network/networkService';
-import { useRouter } from 'vue-router';
+import { fetchNetwork} from '@/services/network/networkService';
 
-// Autenticação
-const authStore = useAuthStore();
-
-// Propriedades recebidas
-const props = defineProps({
-  username: String || null 
-});
-
-// Interface de NetworkNode
-interface NetworkNode {
-  parent_id: number | null;
-  username: string | null;
-  sponsor_username: string | null;
-  parent_username: string | null;
-  level: number | null;
-  position: number | null;
-  status: string | null;
-}
-
-// Estado do componente
-const treeData = ref<Array<{ [position: string]: NetworkNode }> | null>(null);
-const loading = ref(true);  
-const hasTree = ref(false);  
-const error = ref('');
-const progressSize = ref(512);
-
-// Dados da página
 const page = ref({ title: 'Network' });
 const breadcrumbs = shallowRef([{ title: 'Network', disabled: true, href: '#' }]);
 
-// Função que busca a árvore de rede
+const authStore = useAuthStore();
+
+const count = ref<{ left: number; right: number }>({
+  left: 0,
+  right: 0,
+});
+const treeData = ref<Array<{ [position: string]: any }> | null>(null);
+const searchValue = ref("");
+const notFound = ref(false);
+const loading = ref(true);  
+const hasTree = ref(false);  
+const progressSize = ref(512);
+
+
+
 async function handleSearch(username: string) {
-  try {
-    loading.value = true;
-    hasTree.value = false;
 
-    const response = await fetchNetwork(username);
-    if (response.status) {
-      treeData.value = response.network;
-      hasTree.value = true;
+    searchValue.value = username
 
-      console.log(treeData.value)
-    } else {
-      handleSearch(authStore.user.user.username);
+    if(searchValue.value == '') { 
+        username = authStore.user.user.username
+    } 
+
+    if(searchValue.value == authStore.user.user.username) { 
+        searchValue.value = ''
+    } 
+    try {
+        loading.value = true;
+        hasTree.value = false;
+        const response = await fetchNetwork(username);
+        if (response.status) {
+
+            treeData.value = response.network;
+            count.value.left = response.count.left 
+            count.value.right = response.count.right
+
+            hasTree.value = true;
+            loading.value = false;
+            return true
+        } 
+        notFound.value = true
+        handleSearch( authStore.user.user.username)
+    } catch (err) {
+        return false
     }
-  } catch (err) {
-    error.value = "Não foi possível carregar os dados da árvore.";
-  } finally {
-    loading.value = false;
-  }
+}
+
+
+async function handleInformations(username:string) { 
+    return true
 }
 
 function updateProgressSize() {
@@ -73,7 +75,7 @@ function updateProgressSize() {
 onMounted(() => {
   updateProgressSize();
   window.addEventListener('resize', updateProgressSize);
-  handleSearch(authStore.user.user.username); // Carrega os dados de rede
+  handleSearch(authStore.user.user.username); 
 });
 
 
@@ -88,49 +90,97 @@ import './styles/extra-large.css';
 
 
 <template>
+
     <BaseBreadcrumb :title="page.title" :breadcrumbs="breadcrumbs"></BaseBreadcrumb>
+
+    <v-snackbar color="error" variant="flat" rounded="md" location="top right" v-model="notFound">
+        User not found.
+    </v-snackbar>
+
     <div v-if="loading" class="loader-container">
-        <v-progress-circular
-            aria-label="circular progressbar"
-            :size=progressSize
-            indeterminate
-            color="primary"
-            bg-opacity="1"
-            bg-color="borderLight"
-        >
-        </v-progress-circular>
+            <v-progress-circular
+                aria-label="circular progressbar"
+                :size=progressSize
+                indeterminate
+                color="primary"
+                bg-opacity="1"
+                bg-color="borderLight"
+            >
+            </v-progress-circular>
+        </div>
+    
+    <div v-if="!loading">
+        <v-row>
+            <v-col cols="9" sm="10" md="10" lg="10">
+                <v-text-field
+                variant="outlined"
+                single-line
+                color="primary"
+                density="comfortable"
+                :placeholder = "searchValue"
+                v-model="searchValue"
+                @keyup.enter="handleSearch(searchValue)"
+
+                >
+                </v-text-field>
+            </v-col>
+            <v-col cols="3" sm="2" md="2" lg="2">
+                <v-btn
+                    color="primary"
+                    block
+                    class="d-block"
+                    rounded="md"
+                    size="large"
+                    @click="handleSearch(searchValue)"
+                >
+                    Search
+                </v-btn>
+            </v-col>
+        </v-row>
+
+        <v-row class="justify-space-around">
+            <v-col cols="12" sm="12" md="6" lg="3">
+                <v-card elevation="0" rounded="lg">
+                    <v-card variant="outlined" rounded="lg">
+                        <v-card-text>
+                            <div class="d-flex align-items-center justify-space-between">
+                            <div>
+                                <h4 class="text-h4">Left Side: </h4>
+                            </div>
+                            <span class="d-flex align-center">
+                                <h4 class="text-h4 text-success">{{ count.left }}</h4>
+                            </span>
+                            </div>
+                        </v-card-text>
+                    </v-card>
+                </v-card>
+            </v-col>
+            <v-col cols="12" sm="12" md="6" lg="3">
+                <v-card elevation="0" rounded="lg">
+                    <v-card variant="outlined" rounded="lg">
+                        <v-card-text>
+                            <div class="d-flex align-items-center justify-space-between">
+                            <div>
+                                <h4 class="text-h4">Right Side: </h4>
+                            </div>
+                            <span class="d-flex align-center">
+                                <h4 class="text-h4 text-success">{{ count.right }}</h4>
+                            </span>
+                            </div>
+                        </v-card-text>
+                    </v-card>
+                </v-card>
+            </v-col>
+        </v-row>
     </div>
-    <div v-else-if="error">{{ error }}</div>
+   
     <div v-if="!loading && hasTree" class="d-flex justify-center tree-container">
 
         
         <div class="tree">
             <ul>
                 <li>
-                    <Node v-if="treeData" @search="handleSearch"
-                    :root="true"
-                    :username="treeData[0][1]?.username ?? undefined"
-                    :parentUsername="treeData[0][1]?.parent_username ?? undefined"
-                    :sponsorUsername="treeData[0][1]?.sponsor_username ?? undefined"
-                    :level="treeData[0][1]?.level ?? undefined"
-                    :position="treeData[0][1]?.position ?? undefined"
-                    :status="treeData[0][1]?.status ?? undefined"
-                    />
-                    <ul > 
-                        <li v-for="level2 in treeData[1]" >
-                            <a>{{ level2.username }}</a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-
-        
-<!-- 
-        <div class="tree">
-            <ul>
-                <li>
-                    <Node v-if="treeData" @search="handleSearch"
+                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                     :root="true"
                     :username="treeData[0][1]?.username ?? undefined"
                     :parentUsername="treeData[0][1]?.parent_username ?? undefined"
@@ -141,7 +191,7 @@ import './styles/extra-large.css';
                     />
                     <ul>
                         <li>
-                            <Node v-if="treeData" @search="handleSearch"
+                            <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                             :username="treeData[1][1]?.username ?? undefined"
                             :parentUsername="treeData[1][1]?.parent_username ?? undefined"
                             :sponsorUsername="treeData[1][1]?.sponsor_username ?? undefined"
@@ -151,7 +201,7 @@ import './styles/extra-large.css';
                             />
                             <ul>
                                 <li>
-                                    <Node v-if="treeData" @search="handleSearch"
+                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                     :username="treeData[2][3]?.username ?? undefined"
                                     :parentUsername="treeData[2][3]?.parent_username ?? undefined"
                                     :sponsorUsername="treeData[2][3]?.sponsor_username ?? undefined"
@@ -161,7 +211,7 @@ import './styles/extra-large.css';
                                     />
                                     <ul>
                                         <li>
-                                            <Node v-if="treeData" @search="handleSearch"
+                                            <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                             :username="treeData[3][7]?.username ?? undefined"
                                             :parentUsername="treeData[3][7]?.parent_username ?? undefined"
                                             :sponsorUsername="treeData[3][7]?.sponsor_username ?? undefined"
@@ -171,7 +221,7 @@ import './styles/extra-large.css';
                                             />
                                             <ul class="mate-container-level-5">
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][15]?.username ?? undefined"
                                                     :parentUsername="treeData[4][15]?.parent_username ?? undefined"
@@ -182,7 +232,7 @@ import './styles/extra-large.css';
                                                     />
                                                 </li>
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][16]?.username ?? undefined"
                                                     :parentUsername="treeData[4][16]?.parent_username ?? undefined"
@@ -195,7 +245,7 @@ import './styles/extra-large.css';
                                             </ul>
                                         </li>
                                         <li>
-                                            <Node v-if="treeData" @search="handleSearch"
+                                            <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                             :username="treeData[3][8]?.username ?? undefined"
                                             :parentUsername="treeData[3][8]?.parent_username ?? undefined"
                                             :sponsorUsername="treeData[3][8]?.sponsor_username ?? undefined"
@@ -205,7 +255,7 @@ import './styles/extra-large.css';
                                             />
                                             <ul class="mate-container-level-5">
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][17]?.username ?? undefined"
                                                     :parentUsername="treeData[4][17]?.parent_username ?? undefined"
@@ -216,7 +266,7 @@ import './styles/extra-large.css';
                                                     />
                                                 </li>
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][18]?.username ?? undefined"
                                                     :parentUsername="treeData[4][18]?.parent_username ?? undefined"
@@ -231,7 +281,7 @@ import './styles/extra-large.css';
                                     </ul>
                                 </li>
                                 <li>
-                                    <Node v-if="treeData" @search="handleSearch"
+                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                     :username="treeData[2][4]?.username ?? undefined"
                                     :parentUsername="treeData[2][4]?.parent_username ?? undefined"
                                     :sponsorUsername="treeData[2][4]?.sponsor_username ?? undefined"
@@ -241,7 +291,7 @@ import './styles/extra-large.css';
                                     />
                                     <ul>
                                         <li>
-                                            <Node v-if="treeData" @search="handleSearch"
+                                            <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                             :username="treeData[3][9]?.username ?? undefined"
                                             :parentUsername="treeData[3][9]?.parent_username ?? undefined"
                                             :sponsorUsername="treeData[3][9]?.sponsor_username ?? undefined"
@@ -251,7 +301,7 @@ import './styles/extra-large.css';
                                             />
                                             <ul class="mate-container-level-5">
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][19]?.username ?? undefined"
                                                     :parentUsername="treeData[4][19]?.parent_username ?? undefined"
@@ -263,7 +313,7 @@ import './styles/extra-large.css';
 
                                                 </li>
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][20]?.username ?? undefined"
                                                     :parentUsername="treeData[4][20]?.parent_username ?? undefined"
@@ -276,7 +326,7 @@ import './styles/extra-large.css';
                                             </ul>
                                         </li>
                                         <li>
-                                            <Node v-if="treeData" @search="handleSearch"
+                                            <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                             :username="treeData[3][10]?.username ?? undefined"
                                             :parentUsername="treeData[3][10]?.parent_username ?? undefined"
                                             :sponsorUsername="treeData[3][10]?.sponsor_username ?? undefined"
@@ -286,7 +336,7 @@ import './styles/extra-large.css';
                                             />
                                             <ul class="mate-container-level-5">
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][21]?.username ?? undefined"
                                                     :parentUsername="treeData[4][21]?.parent_username ?? undefined"
@@ -298,7 +348,7 @@ import './styles/extra-large.css';
 
                                                 </li>
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][22]?.username ?? undefined"
                                                     :parentUsername="treeData[4][22]?.parent_username ?? undefined"
@@ -315,7 +365,7 @@ import './styles/extra-large.css';
                             </ul>
                         </li>
                         <li>
-                            <Node v-if="treeData" @search="handleSearch"
+                            <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                             :username="treeData[1][2]?.username ?? undefined" 
                             :parentUsername="treeData[1][2]?.parent_username ?? undefined"
                             :sponsorUsername="treeData[1][2]?.sponsor_username ?? undefined"
@@ -325,7 +375,7 @@ import './styles/extra-large.css';
                             />
                             <ul>
                                 <li>
-                                    <Node v-if="treeData" @search="handleSearch"
+                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                     :username="treeData[2][5]?.username ?? undefined"
                                     :parentUsername="treeData[2][5]?.parent_username ?? undefined"
                                     :sponsorUsername="treeData[2][5]?.sponsor_username ?? undefined"
@@ -335,7 +385,7 @@ import './styles/extra-large.css';
                                     />
                                     <ul>
                                         <li>
-                                            <Node v-if="treeData" @search="handleSearch"
+                                            <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                             :username="treeData[3][11]?.username ?? undefined"
                                             :parentUsername="treeData[3][11]?.parent_username ?? undefined"
                                             :sponsorUsername="treeData[3][11]?.sponsor_username ?? undefined"
@@ -345,7 +395,7 @@ import './styles/extra-large.css';
                                             />
                                             <ul class="mate-container-level-5">
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][23]?.username ?? undefined"
                                                     :parentUsername="treeData[4][23]?.parent_username ?? undefined"
@@ -356,7 +406,7 @@ import './styles/extra-large.css';
                                                     />
                                                 </li>
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][24]?.username ?? undefined"
                                                     :parentUsername="treeData[4][24]?.parent_username ?? undefined"
@@ -369,7 +419,7 @@ import './styles/extra-large.css';
                                             </ul>
                                         </li>
                                         <li>
-                                            <Node v-if="treeData" @search="handleSearch"
+                                            <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                             :username="treeData[3][12]?.username ?? undefined"
                                             :parentUsername="treeData[3][12]?.parent_username ?? undefined"
                                             :sponsorUsername="treeData[3][12]?.sponsor_username ?? undefined"
@@ -379,7 +429,7 @@ import './styles/extra-large.css';
                                             />
                                             <ul class="mate-container-level-5">
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][25]?.username ?? undefined"
                                                     :parentUsername="treeData[4][25]?.parent_username ?? undefined"
@@ -391,7 +441,7 @@ import './styles/extra-large.css';
 
                                                 </li>
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][26]?.username ?? undefined"
                                                     :parentUsername="treeData[4][26]?.parent_username ?? undefined"
@@ -407,7 +457,7 @@ import './styles/extra-large.css';
                                     </ul>
                                 </li>
                                 <li>
-                                    <Node v-if="treeData" @search="handleSearch"
+                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                     :username="treeData[2][6]?.username ?? undefined"
                                     :parentUsername="treeData[2][6]?.parent_username ?? undefined"
                                     :sponsorUsername="treeData[2][6]?.sponsor_username ?? undefined"
@@ -417,7 +467,7 @@ import './styles/extra-large.css';
                                     />
                                     <ul>
                                         <li>
-                                            <Node v-if="treeData" @search="handleSearch"
+                                            <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                             :username="treeData[3][13]?.username ?? undefined"
                                             :parentUsername="treeData[3][13]?.parent_username ?? undefined"
                                             :sponsorUsername="treeData[3][13]?.sponsor_username ?? undefined"
@@ -427,7 +477,7 @@ import './styles/extra-large.css';
                                             />
                                             <ul class="mate-container-level-5">
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][27]?.username ?? undefined"
                                                     :parentUsername="treeData[4][27]?.parent_username ?? undefined"
@@ -438,7 +488,7 @@ import './styles/extra-large.css';
                                                     />
                                                 </li>
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][28]?.username ?? undefined"
                                                     :parentUsername="treeData[4][28]?.parent_username ?? undefined"
@@ -451,7 +501,7 @@ import './styles/extra-large.css';
                                             </ul>
                                         </li>
                                         <li>
-                                            <Node v-if="treeData" @search="handleSearch"
+                                            <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                             :username="treeData[3][14]?.username ?? undefined"
                                             :parentUsername="treeData[3][14]?.parent_username ?? undefined"
                                             :sponsorUsername="treeData[3][14]?.sponsor_username ?? undefined"
@@ -461,7 +511,7 @@ import './styles/extra-large.css';
                                             />
                                             <ul class="mate-container-level-5">
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][29]?.username ?? undefined"
                                                     :parentUsername="treeData[4][29]?.parent_username ?? undefined"
@@ -472,7 +522,7 @@ import './styles/extra-large.css';
                                                     />
                                                 </li>
                                                 <li>
-                                                    <Node v-if="treeData" @search="handleSearch"
+                                                    <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
                                                     class="level-5"
                                                     :username="treeData[4][30]?.username ?? undefined"
                                                     :parentUsername="treeData[4][30]?.parent_username ?? undefined"
@@ -491,146 +541,57 @@ import './styles/extra-large.css';
                     </ul>
                 </li>
             </ul>
-        </div> -->
+        </div>
     </div>
 
 
+<!-- 
 
-    <div class="d-flex justify-center pb-8 mb-8">
-    <div class="tree">
-        <ul>
-            <li>
-                <a></a>
-                <ul>
-                    <li>
-                        <a></a>
-                        <ul>
-                            <li>
-                                <a></a>
-                                <ul>
-                                    <li>
-                                        <a ></a>
-                                        <ul class="mate-container-level-5">
-                                            <li>
-                                                <a  class="level-5"></a>
-                                            </li>
-                                            <li>
-                                                <a  class="level-5"></a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a ></a>
-                                        <ul class="mate-container-level-5">
-                                            <li>
-                                                <a  class="level-5"></a>
-                                            </li>
-                                            <li>
-                                                <a  class="level-5"></a>
-                                            </li>
-                                        </ul>
-
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a ></a>
-                                <ul>
-                                    <li>
-                                        <a ></a>
-                                        <ul class="mate-container-level-5">
-                                            <li>
-                                                <a  class="level-5"></a>
-
-                                            </li>
-                                            <li>
-                                                <a  class="level-5"></a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a ></a>
-                                        <ul class="mate-container-level-5">
-                                            <li>
-                                                <a  class="level-5"></a>
-
-                                            </li>
-                                            <li>
-                                                <a  class="level-5"></a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a ></a>
-                        <ul>
-                            <li>
-                                <a ></a>
-                                <ul>
-                                    <li>
-                                        <a ></a>
-                                        <ul class="mate-container-level-5">
-                                            <li>
-                                                <a  class="level-5"></a>
-                                            </li>
-                                            <li>
-                                                <a  class="level-5"></a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a ></a>
-                                        <ul class="mate-container-level-5">
-                                            <li>
-                                                <a  class="level-5"></a>
-
-                                            </li>
-                                            <li>
-                                                <a  class="level-5"></a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a ></a>
-                                <ul>
-                                    <li>
-                                        <a ></a>
-                                        <ul class="mate-container-level-5">
-                                            <li>
-                                                <a  class="level-5"></a>
-                                            </li>
-                                            <li>
-                                                <a  class="level-5"></a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a ></a>
-                                        <ul class="mate-container-level-5">
-                                            <li>
-                                                <a  class="level-5"></a>
-                                            </li>
-                                            <li>
-                                                <a  class="level-5"></a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-</div>
-
-
+<v-dialog max-width="400" v-model="dialog" v-if="node">
+        <v-card 
+        :title="node.username"
+        >
+            <v-card-text>
+                
+                <div class="">
+                    <v-row class="">
+                        <v-col cols="6">
+                            <v-row >
+                                <v-col cols="12">
+                                    <span class="text-subtitle-2 text-disabled font-weight-medium">Sponsor</span>
+                                    <p class="text-subtitle-2 font-weight-medium">
+                                        {{node.sponsor_username}}
+                                    </p>
+                                </v-col>
+                                <v-col cols="12">
+                                    <span class="text-subtitle-2 text-disabled font-weight-medium">Parent</span>
+                                    <p class="text-subtitle-2 font-weight-medium">
+                                        {{ node.parent_username }}
+                                    </p>
+                                </v-col>
+                                <v-col cols="12">
+                                    <span class="text-subtitle-2 text-disabled font-weight-medium">Activation Date:</span>
+                                    <p class="text-subtitle-2 font-weight-medium">
+                                        20/09/2024
+                                    </p>
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                        <v-col cols="6">
+                            <v-row >
+                                <v-col cols="12">
+                                    <img src="" alt="">
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                    </v-row>
+                </div>
+              </v-card-text>
+            <v-card-actions>
+            <v-btn color="primary" block @click="dialog = false">Close</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog> -->
 </template>
 
 
@@ -640,6 +601,8 @@ import './styles/extra-large.css';
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 100px
+
 }
 
 .tree-container { 

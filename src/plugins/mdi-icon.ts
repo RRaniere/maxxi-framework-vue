@@ -8,7 +8,11 @@ import {
   mdiHeartOutline,
   mdiHeartHalf,
   mdiMagnify,
-  mdiPlus
+  mdiPlus,
+  mdiAccount,
+  mdiArrowBottomLeftThin,
+  mdiArrowBottomRightThin
+
 } from '@mdi/js';
 
 export const icons = {
@@ -21,5 +25,9 @@ export const icons = {
   heartOutline: mdiHeartOutline,
   heartHalf: mdiHeartHalf,
   magnify: mdiMagnify,
-  plus: mdiPlus
+  plus: mdiPlus,
+  user: mdiAccount,
+  arrowBottomLeft: mdiArrowBottomLeftThin,
+  arrowBottomRight: mdiArrowBottomRightThin
+
 };

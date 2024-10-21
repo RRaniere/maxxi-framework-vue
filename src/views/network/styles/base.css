@@ -117,7 +117,8 @@ right connector from last child*/
 }
 .tree li a:hover+ul li a {
     color: #000;
-    border: 1px solid rgba(70,128,255, 1);
+    border: 1px solid white;
+    background-color: rgba(255,255,255, 0.1);
 }
 
 /*Connector styles on hover*/
@@ -125,5 +126,5 @@ right connector from last child*/
 .tree li a:hover+ul li::before,
 .tree li a:hover+ul::before,
 .tree li a:hover+ul ul::before {
-    border-color: rgba(70,128,255, 1);
+    border-color: white;
 }

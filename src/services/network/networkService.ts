@@ -1,5 +1,4 @@
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
-
 interface NetworkNode {
   username: string | null;
   parent_username: string | null;
@@ -15,12 +14,15 @@ interface NetworkResponse {
   status: boolean;
   network: Array<{ [position: string]: NetworkNode }> | null;
   message?: string;
+  count: { left: number; right: number };
+
 }
 
 interface FetchNetworkResult {
   status: boolean;
   message: string;
   network: Array<{ [position: string]: NetworkNode }> | null;
+  count: { left: number; right: number };
 }
 
 
@@ -63,7 +65,7 @@ function populateTreeWithData(tree: NetworkResponse['network'], nodes: NetworkRe
   return tree;
 }
 
-export async function fetchNetwork(login: string): Promise<FetchNetworkResult> {
+async function fetchNetwork(login: string): Promise<FetchNetworkResult> {
   try {
     // Faz a requisição à API para obter os dados da árvore
     const response = await fetchWrapper.post('/network/get-network', { login }) as NetworkResponse;
@@ -73,7 +75,11 @@ export async function fetchNetwork(login: string): Promise<FetchNetworkResult> {
       return {
         status: false,
         message: response.message || 'A API retornou um status de falha.',
-        network: null
+        network: null,
+        count: { 
+          left: 0,
+          right: 0
+        }
       };
     }
 
@@ -82,7 +88,11 @@ export async function fetchNetwork(login: string): Promise<FetchNetworkResult> {
       return {
         status: false,
         message: 'A resposta da API não contém a propriedade network.',
-        network: null
+        network: null,
+        count: { 
+          left: 0,
+          right: 0
+        }
       };
     }
 
@@ -95,7 +105,11 @@ export async function fetchNetwork(login: string): Promise<FetchNetworkResult> {
     return {
       status: true,
       message: 'Tree loaded.',
-      network: filledTree
+      network: filledTree,
+      count: { 
+        left: response.count.left,
+        right: response.count.right,
+      }
     };
 
   } catch (error) {
@@ -103,7 +117,32 @@ export async function fetchNetwork(login: string): Promise<FetchNetworkResult> {
     return {
       status: false,
       message: 'Erro ao buscar os dados da árvore.',
-      network: null
+      network: null,
+      count: { 
+        left: 0,
+        right: 0
+      }
     };
   }
+
+
 }
+
+
+async function fetchNode(login: string) { 
+
+  try {
+    const response = await fetchWrapper.post('/network/get-network-node', { login });
+    if (response.status == true) { 
+      return response.node;
+    }
+
+    return null;
+
+  }catch (error) { 
+    console.log(error)
+  }
+
+}
+
+export { fetchNetwork, fetchNode};
