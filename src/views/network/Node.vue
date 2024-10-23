@@ -88,7 +88,7 @@ function informations() {
     color: white;
     position: absolute;
     margin-top: -25px;
-    margin-left: -15px;
+    margin-left: -20px;
     width: 100px;
 }
 

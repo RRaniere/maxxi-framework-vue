@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';
-import { ref, shallowRef, onMounted, defineProps } from 'vue';
+import { ref, shallowRef, onMounted } from 'vue';
 import BaseBreadcrumb from '@/components/shared/BaseBreadcrumb.vue';
 import Node from '@/views/network/Node.vue';
 import { fetchNetwork} from '@/services/network/networkService';
@@ -20,10 +20,13 @@ const notFound = ref(false);
 const loading = ref(true);  
 const hasTree = ref(false);  
 const progressSize = ref(512);
+const treeContainer = ref(null);
 
 
 
-async function handleSearch(username: string) {
+
+async function search(username: string) { 
+
 
     searchValue.value = username
 
@@ -46,13 +49,27 @@ async function handleSearch(username: string) {
 
             hasTree.value = true;
             loading.value = false;
+            
             return true
         } 
+
         notFound.value = true
+
         handleSearch( authStore.user.user.username)
+
+        
     } catch (err) {
         return false
     }
+
+
+}
+
+async function handleSearch(username: string) {
+    
+    await search(username);
+    updateProgressSize();
+
 }
 
 
@@ -61,31 +78,35 @@ async function handleInformations(username:string) {
 }
 
 function updateProgressSize() {
-  const screenWidth = window.innerWidth;
 
-  if (screenWidth <= 600) {
-    progressSize.value = 200;
-  } else if (screenWidth <= 960) {
-    progressSize.value = 300;
-  } else {
-    progressSize.value = 512; 
-  }
+    const screenWidth = window.innerWidth;
+
+    if (screenWidth <= 600) {
+        progressSize.value = 200;
+    } else if (screenWidth <= 960) {
+        progressSize.value = 300;
+    } else {
+        progressSize.value = 512; 
+    }
+
+    const treeContainer = document.querySelector('.tree-container');
+    if (treeContainer) {
+        const scrollWidth = treeContainer.scrollWidth; 
+        const clientWidth = treeContainer.clientWidth; 
+        const scrollTo = (scrollWidth - clientWidth) / 2;
+        treeContainer.scrollLeft = scrollTo; 
+    }
 }
 
-onMounted(() => {
-  updateProgressSize();
-  window.addEventListener('resize', updateProgressSize);
-  handleSearch(authStore.user.user.username); 
+onMounted(async () => {
+    await handleSearch(authStore.user.user.username); 
+    window.addEventListener('resize', updateProgressSize);
+    
 });
 
 
 import './styles/base.css';
-import './styles/small-mobile.css';
-import './styles/mobile.css';
-import './styles/small.css';
-import './styles/medium.css';
-import './styles/large.css';
-import './styles/extra-large.css';
+
 </script>
 
 
@@ -173,11 +194,10 @@ import './styles/extra-large.css';
             </v-col>
         </v-row>
     </div>
-   
-    <div v-if="!loading && hasTree" class="d-flex justify-center tree-container">
 
-        
-        <div class="tree">
+   
+    <div v-if="!loading && hasTree" class="tree-container" style="width: 100%; overflow-x: auto;" ref="treeContainer">
+        <div class="tree d-flex justify-center" style="min-width: 1500px;" >
             <ul>
                 <li>
                     <Node v-if="treeData" @search="handleSearch" @informations="handleInformations"
@@ -544,54 +564,6 @@ import './styles/extra-large.css';
         </div>
     </div>
 
-
-<!-- 
-
-<v-dialog max-width="400" v-model="dialog" v-if="node">
-        <v-card 
-        :title="node.username"
-        >
-            <v-card-text>
-                
-                <div class="">
-                    <v-row class="">
-                        <v-col cols="6">
-                            <v-row >
-                                <v-col cols="12">
-                                    <span class="text-subtitle-2 text-disabled font-weight-medium">Sponsor</span>
-                                    <p class="text-subtitle-2 font-weight-medium">
-                                        {{node.sponsor_username}}
-                                    </p>
-                                </v-col>
-                                <v-col cols="12">
-                                    <span class="text-subtitle-2 text-disabled font-weight-medium">Parent</span>
-                                    <p class="text-subtitle-2 font-weight-medium">
-                                        {{ node.parent_username }}
-                                    </p>
-                                </v-col>
-                                <v-col cols="12">
-                                    <span class="text-subtitle-2 text-disabled font-weight-medium">Activation Date:</span>
-                                    <p class="text-subtitle-2 font-weight-medium">
-                                        20/09/2024
-                                    </p>
-                                </v-col>
-                            </v-row>
-                        </v-col>
-                        <v-col cols="6">
-                            <v-row >
-                                <v-col cols="12">
-                                    <img src="" alt="">
-                                </v-col>
-                            </v-row>
-                        </v-col>
-                    </v-row>
-                </div>
-              </v-card-text>
-            <v-card-actions>
-            <v-btn color="primary" block @click="dialog = false">Close</v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog> -->
 </template>
 
 
