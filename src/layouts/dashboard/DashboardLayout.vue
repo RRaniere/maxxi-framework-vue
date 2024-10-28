@@ -5,8 +5,6 @@ import { RouterView } from 'vue-router';
 import LoaderWrapper from './LoaderWrapper.vue';
 import VerticalSidebarVue from './vertical-sidebar/VerticalSidebar.vue';
 import VerticalHeaderVue from './vertical-header/VerticalHeader.vue';
-import HorizontalHeader from './horizontal-header/HorizontalHeader.vue';
-import HorizontalSidebar from './horizontal-sidebar/HorizontalSidebar.vue';
 import { useCustomizerStore } from '../../stores/customizer';
 import { DirAttrSet, HexToRgb } from '@/utils/utils';
 const customizer = useCustomizerStore();

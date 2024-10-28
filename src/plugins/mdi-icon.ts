@@ -11,7 +11,8 @@ import {
   mdiPlus,
   mdiAccount,
   mdiArrowBottomLeftThin,
-  mdiArrowBottomRightThin
+  mdiArrowBottomRightThin,
+  mdiBitcoin
 
 } from '@mdi/js';
 
@@ -28,6 +29,7 @@ export const icons = {
   plus: mdiPlus,
   user: mdiAccount,
   arrowBottomLeft: mdiArrowBottomLeftThin,
-  arrowBottomRight: mdiArrowBottomRightThin
+  arrowBottomRight: mdiArrowBottomRightThin,
+  bitcoin: mdiBitcoin
 
 };
