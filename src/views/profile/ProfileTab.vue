@@ -20,6 +20,8 @@ const emailSent = ref(false);
 const snackbar = ref(false);
 const snackbarMessage = ref('');
 const snackbarColor = ref('');
+const snackbarIcon = ref('');
+
 
 // Validation rules
 const rules = {
@@ -42,8 +44,8 @@ const isFormValid = computed(() => {
   const firstNameValid = rules.firstName.every((rule) => rule(firstname.value) === true);
   const lastNameValid = rules.lastName.every((rule) => rule(lastname.value) === true);
   const emailValid = rules.email.every((rule) => rule(email.value) === true);
-
-  return firstNameValid && lastNameValid && emailValid;
+  const hasChanges = email.value != authStore.user.user.email || lastname.value != authStore.user.user.last_name || firstname.value != authStore.user.user.first_name
+  return firstNameValid && lastNameValid && emailValid && hasChanges;
 });
 
 // Submission methods
@@ -62,7 +64,7 @@ async function submit() {
       emailSent.value = true;
     }
   } catch (error) {
-    showSnackbar('error', 'Failed to send verification email');
+    showSnackbar('error', 'Failed to send verification email', "$closeCircle");
   } finally {
     isLoading.value = false;
   }
@@ -72,7 +74,7 @@ async function handleUpdatePersonalData(otp: number) {
   const response = await updatePersonalData(otp);
 
   if (response.status) {
-    showSnackbar('success', response.message);
+    showSnackbar('success', response.message, "$checkboxMarkedCircleOutline");
     authStore.updateUserData({
       firstName: profileStore.userData.firstname,
       lastName: profileStore.userData.lastname,
@@ -80,15 +82,15 @@ async function handleUpdatePersonalData(otp: number) {
     });
     emailSent.value = false;
   } else {
-    showSnackbar('error', response.message);
+    showSnackbar('error', response.message, "$closeCircle");
   }
 }
 
-// Utility to handle Snackbar messages
-function showSnackbar(color: string, message: string) {
+function showSnackbar(color: string, message: string, icon:string) {
   snackbarColor.value = color;
   snackbarMessage.value = message;
   snackbar.value = true;
+  snackbarIcon.value = icon
 }
 </script>
 
@@ -159,7 +161,7 @@ function showSnackbar(color: string, message: string) {
     location="top right"
     min-width="300"
   >
-    <v-icon class="me-1" size="small" icon="$closeCircle" />
+    <v-icon class="me-1" size="small" :icon="snackbarIcon" />
     {{ snackbarMessage }}
   </v-snackbar>
 </template>

@@ -17,4 +17,18 @@ async function updatePersonalData(otp:number) {
 }
 
 
-export { updatePersonalData }
+async function updateFinancialData(data : any, otp:number) { 
+
+    try { 
+        const response = await fetchWrapper.post('/profile/financial-data', { data,otp });
+        return response
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+
+
+}
+
+
+export { updatePersonalData, updateFinancialData}

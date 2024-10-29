@@ -5,10 +5,10 @@ import SvgSprite from '@/components/shared/SvgSprite.vue';
 import BaseBreadcrumb from '@/components/shared/BaseBreadcrumb.vue';
 
 // tabs import
-import UserProfileTab from './UserProfileTab.vue';
+import ProfileTab from './ProfileTab.vue';
 import BillingTab from './BillingTab.vue';
-import PaymentTab from './PaymentTab.vue';
-import ChangePasswordTab from './ChangePasswordTab.vue';
+import FinancialTab from './FinancialTab.vue';
+import SecurityTab from './SecurityTab.vue';
 
 // theme breadcrumb
 const page = ref({ title: 'Profile' });
@@ -46,14 +46,14 @@ const tab = ref('tab-profile');
                         <span class="text-subtitle-2 text-disabled font-weight-medium d-block">Profile Settings</span>
                       </div>
                     </v-tab>
-                    <v-tab value="tab-payment" rounded="md" class="text-start overflow-hidden" height="70">
+                    <v-tab value="tab-financial" rounded="md" class="text-start overflow-hidden" height="70">
                       <SvgSprite name="custom-wallet-outline" class="v-icon--start" style="width: 16px; height: 16px" />
                       <div>
                         <div>Financial</div>
                         <span class="text-subtitle-2 text-disabled font-weight-medium d-block">Financial Settings</span>
                       </div>
                     </v-tab>
-                    <v-tab value="tab-change-password" rounded="md" class="mb-3 text-start overflow-hidden" height="70">
+                    <v-tab value="tab-security" rounded="md" class="mb-3 text-start overflow-hidden" height="70">
                       <SvgSprite name="custom-key-outline" class="v-icon--start" style="width: 16px; height: 16px" />
                       <div>
                         <div>Security</div>
@@ -69,16 +69,13 @@ const tab = ref('tab-profile');
                 <v-card-text>
                   <v-window v-model="tab">
                     <v-window-item value="tab-profile">
-                      <UserProfileTab />
+                      <ProfileTab />
                     </v-window-item>
-                    <v-window-item value="tab-billing">
-                      <BillingTab />
+                    <v-window-item value="tab-financial">
+                      <FinancialTab />
                     </v-window-item>
-                    <v-window-item value="tab-payment">
-                      <PaymentTab />
-                    </v-window-item>
-                    <v-window-item value="tab-change-password">
-                      <ChangePasswordTab />
+                    <v-window-item value="tab-security">
+                      <SecurityTab />
                     </v-window-item>
                   </v-window>
                 </v-card-text>

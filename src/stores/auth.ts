@@ -37,7 +37,13 @@ export const useAuthStore = defineStore({
         this.user.user.email = data.email;
 
         localStorage.setItem('user', JSON.stringify(this.user));
+    },
+    updateFinancialData(data: { btcAddress: string; usdtAddress: string; ethAddress: string }) {
+      this.user.user.btc_address = data.btcAddress;
+      this.user.user.usdt_address = data.usdtAddress;
+      this.user.user.eth_address  = data.ethAddress;
 
-    }
+      localStorage.setItem('user', JSON.stringify(this.user));
+  }
   }
 });

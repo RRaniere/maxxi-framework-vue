@@ -1,24 +1,46 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const textcpass = ref('textcmpass');
-const textnpass = ref(' 2345');
-const textcmpass = ref('12345');
+const password = ref('');
+const newPassword = ref('');
+const confirmNewPassword = ref('');
+
+// UI state references
+const isLoading = ref(false);
+const emailSent = ref(false);
+const snackbar = ref(false);
+const snackbarMessage = ref('');
+const snackbarColor = ref('');
+const snackbarIcon = ref('');
+
+
+function showSnackbar(color: string, message: string, icon:string) {
+  snackbarColor.value = color;
+  snackbarMessage.value = message;
+  snackbar.value = true;
+  snackbarIcon.value = icon
+}
+
+
+async function submit() {
+  isLoading.value = true;
+
+
+}
 </script>
 
 <template>
-  <div>
-    <v-row class="mt-1">
+  <v-form>
+    <v-row>
       <v-col cols="12" lg="6">
         <v-label class="mb-2">Current Password</v-label>
         <v-text-field
           type="password"
           density="comfortable"
           single-line
-          v-model="textcpass"
+          v-model="password"
           placeholder="Enter Current Password"
           variant="outlined"
-          hide-details
         >
         </v-text-field>
       </v-col>
@@ -30,10 +52,9 @@ const textcmpass = ref('12345');
           type="password"
           density="comfortable"
           single-line
-          v-model="textnpass"
+          v-model="newPassword"
           placeholder="Enter New Password"
           variant="outlined"
-          hide-details
         >
         </v-text-field>
       </v-col>
@@ -43,14 +64,26 @@ const textcmpass = ref('12345');
           type="password"
           density="comfortable"
           single-line
-          v-model="textcmpass"
+          v-model="confirmNewPassword"
           placeholder="Enter Confirm Password"
           variant="outlined"
-          hide-details
         >
         </v-text-field>
       </v-col>
     </v-row>
-    <v-btn color="primary" variant="outlined" rounded="md" size="large" class="text-subtitle-1 mt-4">Change Password</v-btn>
-  </div>
+    <div class="text-end mt-4">
+        <v-divider />
+        <v-btn
+          color="primary"
+          rounded="md"
+          variant="flat"
+          class="mt-4"
+          :disabled="!isFormValid"
+          :loading="isLoading"
+          @click="submit"
+        >
+          Continue
+        </v-btn>
+      </div>
+  </v-form>
 </template>
