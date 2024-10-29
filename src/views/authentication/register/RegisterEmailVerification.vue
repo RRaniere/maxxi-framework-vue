@@ -157,6 +157,7 @@ watch(otp, clearMessages);
   </v-row>
 </template>
 
+
 <style lang="scss">
 .loginBox {
   max-width: 475px;

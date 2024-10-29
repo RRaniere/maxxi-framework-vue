@@ -43,6 +43,12 @@ const MainRoutes = {
       path: '/shopping/invoice',
       component: () => import('@/views/shopping/Invoice.vue'),
     },
+    {
+      name: 'Profile',
+      path: '/profile', 
+      component: () => import('@/views/profile/Profile.vue'),
+      props: true 
+    },
   ]
 };
 

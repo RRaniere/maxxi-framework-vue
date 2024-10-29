@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const baseUrl = `${import.meta.env.VITE_API_URL}`;
 
-// Função para verificar os dados de registro
 export async function verifyRegisterData(userData: any) {
   try {
     const response = await axios.post(`${baseUrl}/register/verify-register-data`, userData);
@@ -12,7 +11,6 @@ export async function verifyRegisterData(userData: any) {
   }
 }
 
-// Função para solicitar a verificação de e-mail
 export async function requestEmailVerification(userData: any) {
   try {
     const response = await axios.post(`${baseUrl}/request-email-verification`, userData);

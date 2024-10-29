@@ -32,6 +32,11 @@ const sidebarItem: menu[] = [
     icon: 'custom-dollar-square',
     to: '/shopping',
   },
+  {
+    title: 'Profile',
+    icon: 'custom-user',
+    to: '/profile',
+  },
 ];
 
 export default sidebarItem;

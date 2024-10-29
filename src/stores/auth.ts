@@ -30,6 +30,14 @@ export const useAuthStore = defineStore({
       this.user = null;
       localStorage.removeItem('user');
       router.push('/login');
+    },
+    updateUserData(data: { firstName: string; lastName: string; email: string }) {
+        this.user.user.first_name = data.firstName;
+        this.user.user.last_name = data.lastName;
+        this.user.user.email = data.email;
+
+        localStorage.setItem('user', JSON.stringify(this.user));
+
     }
   }
 });
