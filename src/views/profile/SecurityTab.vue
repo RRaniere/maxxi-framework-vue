@@ -147,17 +147,17 @@ function showSnackbar(color: string, message: string, icon:string) {
   </v-form>
   <EmailVerification v-if="emailSent && !twoFactorQrCode" @codeFilled="handleRequestOption" />
   <v-row v-if="twoFactorQrCode != ''" class="d-flex justify-center">
-    <v-col cols="10" class="mb-8">
+    <v-col cols="12" md="12" lg="10" >
         <div class="text-h5"><SvgSprite name="custom-shield" class="v-icon--start" style="width: 25px; height: 25px"/>Enable 2FA authenticator</div>
         <span class="text-subtitle-1 text-disabled font-weight-medium d-block">Scan this QR code in the Authenticator App.</span>
     </v-col>
 
-    <v-col cols="2" class="mb-8">
+    <v-col cols="12" md="12" lg="2" >
         <v-btn color="success" block variant="flat" rounded="md" @click="handleEnableTwoFa">Done</v-btn>
     </v-col>
 
     
-    <v-col cols="12">
+    <v-col cols="12" class="mt-8">
       <div id="qr-code" class="d-flex justify-center">
         <qrcode-vue :value="twoFactorQrCode" :size="200" class="mb-6" :margin="1" /> 
       </div>
