@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Logo from '@/layouts/dashboard/logo/LogoMain.vue';
 import AuthLogin from '../login/LoginForm.vue';
-
 import leftImg from '@/assets/images/auth/img-auth-sideimg.png';
 </script>
 

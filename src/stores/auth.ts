@@ -13,15 +13,23 @@ export const useAuthStore = defineStore({
     returnUrl: null
   }),
   actions: {
-    async login(username: string, password: string) {
+    async login(username: string, password: string, totp: number | null = null) {
 
-      const user = await fetchWrapper.post(`/login`, { username, password });
-      // update pinia state
-      this.user = user;
-      // store user details and jwt in local storage to keep user logged in between page refreshes
-      localStorage.setItem('user', JSON.stringify(user));
-      // redirect to previous url or default to home page
-      router.push(this.returnUrl || '/dashboard');
+      const user = await fetchWrapper.post(`/login`, { username, password, totp }); 
+      if(user.status && user.two_factor_enabled) { 
+        return user
+      }
+      if(user.status) { 
+        // update pinia state
+        this.user = user;
+        // store user details and jwt in local storage to keep user logged in between page refreshes
+        localStorage.setItem('user', JSON.stringify(user));
+        // redirect to previous url or default to home page
+        router.push(this.returnUrl || '/dashboard');
+      }
+
+      return true
+     
     },
     async logout() {
 
@@ -44,6 +52,10 @@ export const useAuthStore = defineStore({
       this.user.user.eth_address  = data.ethAddress;
 
       localStorage.setItem('user', JSON.stringify(this.user));
-  }
+    },
+    updateTwoFa(two_factor_enabled:boolean) { 
+      this.user.user.two_factor_enabled = two_factor_enabled
+      localStorage.setItem('user', JSON.stringify(this.user));
+    }
   }
 });

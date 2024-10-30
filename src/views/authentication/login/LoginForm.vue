@@ -1,21 +1,37 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import twoFactor from '../twoFactor/TwoFactor.vue';
 import SvgSprite from '@/components/shared/SvgSprite.vue';
 import { useAuthStore } from '@/stores/auth';
-import { Form } from 'vee-validate';
+import { Form, useIsSubmitting } from 'vee-validate';
+import type { number } from 'yup';
 
 const checkbox = ref(false);
 const valid = ref(false);
 const show1 = ref(false);
 const password = ref('');
 const username = ref('');
+const twoFa = ref(false);
+const error = ref(false);
+const totp = ref<number | null>(null);
 const passwordRules = ref([
   (v: string) => !!v || 'Password is required',
 ]);
 
 async function validate(values: any, { setErrors }: any) {
   const authStore = useAuthStore();
-  return authStore.login(username.value, password.value).catch((error) => setErrors({ apiError: error }));
+  try {
+
+    const response = await authStore.login(username.value, password.value, totp.value);
+
+    if (response.status && response.two_factor_enabled) { 
+      twoFa.value = response.status;
+    }
+   
+  } catch (errorMsg) {
+    error.value = true
+    setErrors({ apiError: errorMsg });
+  }
 }
 </script>
 
@@ -87,6 +103,49 @@ async function validate(values: any, { setErrors }: any) {
     >
       Login</v-btn
     >
-    
   </Form>
+    
+  <v-dialog v-model="twoFa" max-width="500">
+    <Form  @submit="validate" v-slot="{ errors, isSubmitting }">
+    <v-card>
+      <v-card-item class="pa-5">
+        <div class="text-h5"><SvgSprite name="custom-shield" class="v-icon--start" style="width: 25px; height: 25px"/>2FA Authentication</div>
+      </v-card-item>
+      <v-divider></v-divider>
+      <v-card-text>
+        <v-row justify="center">
+          <v-col cols="12" lg="12" xl="12" md="12">
+              <v-otp-input 
+                type="number" 
+                v-model="totp" 
+                class="mb-5 mt-5" 
+                rounded="md" 
+                single-line 
+                >
+              </v-otp-input>
+          </v-col>
+          <div v-if="errors.apiError" class="mb-6 text-subtitle-1 text-error">
+            {{ errors.apiError }}
+          </div>
+          <span class="text-subtitle-1 text-disabled font-weight-medium d-block">Enter the six digit from your authentication app.</span>
+        </v-row>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn
+          color="primary"
+          block
+          :loading = isSubmitting
+          variant="flat"
+          size="large"
+          rounded="md"
+          :disabled="valid"
+          type="submit"
+        >
+          Verify</v-btn
+        >
+      </v-card-actions>
+    </v-card>
+  </Form>
+  </v-dialog>
+
 </template>
