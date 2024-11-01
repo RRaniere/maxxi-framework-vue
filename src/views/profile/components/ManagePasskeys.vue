@@ -1,16 +1,72 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth';
-const authStore = useAuthStore();
+import { getPasskeys, removePasskey } from '@/services/profile/passkeyService';
+import { usePasskeyStore } from '@/stores/profile/passkeys';
+import type { RefSymbol } from '@vue/reactivity';
+
+const passkeysStore = usePasskeyStore();
 
 const isLoading = ref(false);
 const dialog = ref(false);
 
-async function handleRequestEmailVerification(optionParam:string) {
+const passkeyName = ref('');
 
-isLoading.value = true;
+const validName = computed(() => {
+  const valid = passkeyName.value != '';
+  return valid
+});
+
+const snackbar = ref(false);
+const snackbarMessage = ref('');
+const snackbarColor = ref('');
+const snackbarIcon = ref('');
+
+async function openDialog() { 
+    isLoading.value = true
+    try{ 
+        await passkeysStore.fetchPasskeys();
+    }finally{ 
+        isLoading.value = false;
+    }
+    dialog.value = true;
+
+}
+
+async function handleRemovePasskey(credentialId : string) { 
+
+    const response = await passkeysStore.deletePasskey(credentialId);
+    if(response.status) { 
+        showSnackbar('success', response.message, "$checkboxMarkedCircleOutline");
+    }
+
+    if(!response.status) { 
+        showSnackbar('error', response.message, "$closeCircle");
+    }
+   
+}
 
 
+async function handleAddPasskey() { 
+
+    isLoading.value = true
+
+    const response = await passkeysStore.addPasskey(passkeyName.value);
+    isLoading.value = false;
+    if(response.status) { 
+        showSnackbar('success', response.message, "$checkboxMarkedCircleOutline");
+    }
+    if(!response.status) { 
+        showSnackbar('error', response.message, "$closeCircle");
+    }
+
+}
+
+function showSnackbar(color: string, message: string, icon:string) {
+  snackbarColor.value = color;
+  snackbarMessage.value = message;
+  snackbar.value = true;
+  snackbarIcon.value = icon
 }
 
 </script>
@@ -24,7 +80,7 @@ isLoading.value = true;
     </div>
     </v-col>
     <v-col cols="12" md="2" lg="2"> 
-    <v-btn color="secondary" block variant="flat" rounded="md" :loading="isLoading" @click="dialog = true">Manage</v-btn>
+    <v-btn color="secondary" block variant="flat" rounded="md" :loading="isLoading" @click="openDialog">Manage</v-btn>
     </v-col>
 </v-row>
 
@@ -42,6 +98,7 @@ isLoading.value = true;
             <v-col cols="12" class="pb-0">
                 <v-label class="mb-2">Passkey Name</v-label>
                 <v-text-field
+                v-model="passkeyName"
                 placeholder="Passkey Name"
                 color="primary"
                 variant="outlined"
@@ -50,37 +107,29 @@ isLoading.value = true;
                 />
             </v-col>
             <v-col cols="12" class="pt-0">
-                <v-btn color="primary" block variant="flat" rounded="md"> Add Passkey</v-btn>
+                <v-btn color="primary" block variant="flat" rounded="md" @click="handleAddPasskey" :loading="isLoading" :disabled="!validName"> Add Passkey </v-btn>
             </v-col>
         </v-row> 
         <v-divider></v-divider>
-        <v-row class="mt-2">
+        <v-row class="mt-2" v-if="passkeysStore.passkeys.length > 0">
             <v-col cols="12"> 
                 <div class="text-h5">Your Passkeys</div>
             </v-col>
             <v-col cols="12"> 
-
-                <v-row class="mb-1">
+                <v-row class="mb-1" v-for="passkey in passkeysStore.passkeys" >
                     <v-col cols="8">
-                        <div class="text-h6">My Passkey</div>
-                        <span class="text-subtitle-2 text-disabled font-weight-medium d-block">Added 14 hours ago</span>
+                        <div class="text-h6">{{ passkey.name }}</div>
+                        <span class="text-subtitle-2 text-disabled font-weight-medium d-block">{{passkey.created_at_human}}</span>
                     </v-col>
                     <v-col cols="4">
-                        <v-btn color="error"  variant="flat" rounded="md" block>Delete</v-btn>
+                        <v-btn color="error"  variant="flat" rounded="md" block @click="handleRemovePasskey(passkey.credential_id)">Remove</v-btn>
                     </v-col>
                 </v-row>
-
-                <v-row class="mb-1">
-                    <v-col cols="8">
-                        <div class="text-h6">My Passkey</div>
-                        <span class="text-subtitle-2 text-disabled font-weight-medium d-block">Added 14 hours ago</span>
-                    </v-col>
-                    <v-col cols="4">
-                        <v-btn color="error"  variant="flat" rounded="md" block>Delete</v-btn>
-                    </v-col>
-                </v-row>
-
-
+            </v-col>
+        </v-row>
+        <v-row v-else class="mt-4">
+            <v-col cols="12" class="text-center">
+                <div class="text-h6"> You don't have any passkey. </div>
             </v-col>
         </v-row>
         
@@ -93,6 +142,19 @@ isLoading.value = true;
 
 </v-dialog>
 
+
+<v-snackbar
+v-model="snackbar"
+:color="snackbarColor"
+:timeout="3000"
+rounded="md"
+variant="flat"
+location="top right"
+min-width="300"
+>
+<v-icon class="me-1" size="small" :icon="snackbarIcon" />
+{{ snackbarMessage }}
+</v-snackbar>
 
 </template>
 
