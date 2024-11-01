@@ -131,7 +131,7 @@ function showSnackbar(color: string, message: string, icon:string) {
 <v-row>
       <v-col cols="12" md="10" lg="10"> 
     <div>
-        <div class="text-h5"><SvgSprite name="custom-shield" class="v-icon--start" style="width: 25px; height: 25px"/>Manage 2FA authentication</div>
+        <div class="text-h5"><SvgSprite name="custom-shield" class="v-icon--start" style="width: 25px; height: 25px"/>Manage 2FA Authentication</div>
         <span class="text-subtitle-2 text-disabled font-weight-medium d-block">Use applications like Google Authenticator to further secure your account and transactions.</span>
     </div>
     </v-col>
@@ -153,7 +153,7 @@ function showSnackbar(color: string, message: string, icon:string) {
         <EmailVerification  @codeFilled="handleRequestOption" v-if="emailSent && !twoFactorQrCode"/>
         <v-row v-if="twoFactorQrCode != ''" class="d-flex justify-center">
             <v-col cols="12" md="9" lg="9" >
-                <div class="text-h5"><SvgSprite name="custom-shield" class="v-icon--start" style="width: 25px; height: 25px"/>Enable 2FA authenticator</div>
+                <div class="text-h5"><SvgSprite name="custom-shield" class="v-icon--start" style="width: 25px; height: 25px"/>Enable 2FA Authenticator</div>
                 <span class="text-subtitle-1 text-disabled font-weight-medium d-block">Scan this QR code in the Authenticator App.</span>
             </v-col>
 
