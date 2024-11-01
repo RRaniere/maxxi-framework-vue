@@ -6,6 +6,8 @@ import { requestEmailVerification } from '@/services/authentication/emailVerific
 import EmailVerification from '@/views/profile/components/EmailVerification.vue';
 import { requestTwoFaCredentials, enableTwoFa, disableTwoFa} from '@/services/profile/profileService';
 import QrcodeVue from 'qrcode.vue';
+import ManageTwoFa from '@/views/profile/components/ManageTwoFa.vue';
+import ManagePasskeys from './components/ManagePasskeys.vue';
 
 const authStore = useAuthStore();
 
@@ -21,8 +23,6 @@ const snackbarColor = ref('');
 const snackbarIcon = ref('');
 
 async function handleRequestEmailVerification(optionParam:string) {
-
-  console.log(twoFactorQrCode.value)
 
   option.value = optionParam;
   isLoading.value = true;
@@ -132,18 +132,10 @@ function showSnackbar(color: string, message: string, icon:string) {
 
 <template>
   <v-form v-if="!emailSent">
-    <v-row>
-      <v-col cols="12" md="10" lg="10"> 
-        <div>
-          <div class="text-h5"><SvgSprite name="custom-shield" class="v-icon--start" style="width: 25px; height: 25px"/>Manage 2FA authentication</div>
-          <span class="text-subtitle-2 text-disabled font-weight-medium d-block">Use applications like Google Authenticator to further secure your account and transactions.</span>
-        </div>
-      </v-col>
-      <v-col cols="12" md="2" lg="2"> 
-        <v-btn color="primary" block variant="flat" rounded="md" @click="handleRequestEmailVerification('enable-two-factor')" :loading="isLoading" v-if="!authStore.user.user.two_factor_enabled">Enable</v-btn>
-        <v-btn color="error" block variant="flat" rounded="md" @click="handleRequestEmailVerification('disable-two-factor')" :loading="isLoading" v-if="authStore.user.user.two_factor_enabled">Disable</v-btn>
-      </v-col>
-    </v-row>
+    
+        <ManageTwoFa />
+        <ManagePasskeys class="mt-8" />
+
   </v-form>
   <EmailVerification v-if="emailSent && !twoFactorQrCode" @codeFilled="handleRequestOption" />
   <v-row v-if="twoFactorQrCode != ''" class="d-flex justify-center">

@@ -22,7 +22,6 @@ async function submit() {
   emit('codeFilled', otp.value);
 }
 
-
 async function resendVerificationCode() {
   isLoading.value = true;
 
