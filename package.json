@@ -20,6 +20,7 @@
     "@fontsource/public-sans": "5.0.18",
     "@fontsource/roboto": "5.0.14",
     "@mdi/js": "^7.4.47",
+    "@simplewebauthn/browser": "^11.0.0",
     "@tiptap/extension-highlight": "^2.5.8",
     "@tiptap/extension-task-item": "^2.5.8",
     "@tiptap/extension-task-list": "^2.5.8",

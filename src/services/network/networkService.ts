@@ -54,13 +54,18 @@ function createEmptyTree(): NetworkResponse['network'] {
 
 // Função para preencher a árvore com os dados da API
 function populateTreeWithData(tree: NetworkResponse['network'], nodes: NetworkResponse['network']): NetworkResponse['network'] {
-  nodes.forEach((levelData, levelIndex) => {
-    for (const position in levelData) {
-      if (levelData.hasOwnProperty(position)) {
-        tree[levelIndex][position] = levelData[position];
+  if(nodes) { 
+    nodes.forEach((levelData, levelIndex) => {
+      for (const position in levelData) {
+        if (levelData.hasOwnProperty(position)) {
+          if(tree) { 
+            tree[levelIndex][position] = levelData[position];
+          }
+        }
       }
-    }
-  });
+    });
+  }
+ 
 
   return tree;
 }

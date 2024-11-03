@@ -131,45 +131,16 @@ function showSnackbar(color: string, message: string, icon:string) {
 </script>
 
 <template>
-  <v-form v-if="!emailSent">
+  <v-row v-if="!emailSent">
     
+      <v-col cols="12">
         <ManageTwoFa />
-        <ManagePasskeys class="mt-8" />
+      </v-col>
+      <v-col cols="12">
+        <ManagePasskeys />
+      </v-col>
 
-  </v-form>
-  <EmailVerification v-if="emailSent && !twoFactorQrCode" @codeFilled="handleRequestOption" />
-  <v-row v-if="twoFactorQrCode != ''" class="d-flex justify-center">
-    <v-col cols="12" md="12" lg="10" >
-        <div class="text-h5"><SvgSprite name="custom-shield" class="v-icon--start" style="width: 25px; height: 25px"/>Enable 2FA authenticator</div>
-        <span class="text-subtitle-1 text-disabled font-weight-medium d-block">Scan this QR code in the Authenticator App.</span>
-    </v-col>
 
-    <v-col cols="12" md="12" lg="2" >
-        <v-btn color="success" block variant="flat" rounded="md" @click="handleEnableTwoFa">Done</v-btn>
-    </v-col>
-
-    
-    <v-col cols="12" class="mt-8">
-      <div id="qr-code" class="d-flex justify-center">
-        <qrcode-vue :value="twoFactorQrCode" :size="200" class="mb-6" :margin="1" /> 
-      </div>
-    </v-col>
-    <v-col cols="8" class="">
-        <v-text-field color="primary" label="Website" variant="outlined"
-            density="comfortable" single-line hide-details v-model="twoFactorSecret"
-            class="center-text">
-            <template v-slot:append-inner>
-                <v-btn variant="text" aria-label="copy" icon rounded="md"
-                    @click="">
-                    <SvgSprite name="custom-copy" class="text-lightText"
-                        style="width: 20px; height: 20px" />
-                </v-btn>
-            </template>
-        </v-text-field>
-    </v-col>
-    <v-col cols="12" class="text-center">
-        <span class="text-subtitle-1 text-disabled font-weight-medium d-block">If you can't scan the QR code, please enter it manually in the app.</span>
-    </v-col>
   </v-row>
 
   <v-snackbar

@@ -55,14 +55,14 @@ function informations() {
 
 <template>
 
-    <a class="node" :class="{'user-background': props.username}">
+    <a class="node" :class="{'user-background': props.username}" @click="network">
 
         
         <div class="name" :class="{ 'd-none': props.level === 4}">
             <p>{{ props.username }}</p>
         </div>
 
-        <v-menu activator="parent" offset-y v-if="props.username">
+        <!-- <v-menu activator="parent" offset-y v-if="props.username">
             <template v-slot:activator="{ attrs }">
                 <div :class="{ 'd-none': props.level === 4 }" v-bind="attrs" ></div>
             </template>
@@ -74,7 +74,7 @@ function informations() {
                 <v-list-item-title @click="informations" class="cursor-pointer">Informations</v-list-item-title>
             </v-list-item>
             </v-list>
-        </v-menu>
+        </v-menu> -->
     </a>
 
     

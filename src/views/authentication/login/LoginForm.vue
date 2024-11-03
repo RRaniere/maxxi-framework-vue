@@ -13,7 +13,7 @@ const password = ref('');
 const username = ref('');
 const twoFa = ref(false);
 const error = ref(false);
-const totp = ref<number | null>(null);
+const totp = ref<any>();
 const passwordRules = ref([
   (v: string) => !!v || 'Password is required',
 ]);

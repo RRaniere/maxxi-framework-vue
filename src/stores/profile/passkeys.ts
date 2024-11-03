@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia';
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
-import { getPasskeys, removePasskey, addPasskey } from '@/services/profile/passkeyService';
+import { getPasskeys, removePasskey, registerPasskey, savePasskey } from '@/services/profile/passkeyService';
+import { startRegistration } from '@simplewebauthn/browser'
 
 interface Passkey {
     created_at: string,
     created_at_human: string,
-    data: object,
-    credential_id: string;
     name: string
   }
 
@@ -18,20 +17,35 @@ export const usePasskeyStore = defineStore('passkey', {
     async fetchPasskeys() {
       this.passkeys = await getPasskeys().then(res => res.passkeys);
     },
-    async deletePasskey(credentialId :string) {
-      const response = await removePasskey(credentialId)
+    async removePasskey(name :string) {
+      const response = await removePasskey(name)
       if(response.status) { 
-        this.passkeys = this.passkeys.filter(passkey => passkey.credential_id !== credentialId);
+        this.passkeys = this.passkeys.filter(passkey => passkey.name !== name);
       }
       return response;
 
     },
     async addPasskey(name :string) {
-        const response = await addPasskey(name)
-        if(response.status) { 
-            this.passkeys.push(response.passkey);
+        const register = await registerPasskey(name)
+        const options = {
+            optionsJSON: register
+        };
+        try {
+            const passkey = await startRegistration(options);
+            const save = await savePasskey(name, JSON.stringify(passkey), JSON.stringify(register))
+            if(save.status) { 
+                this.passkeys.unshift({
+                    created_at: "Just now",
+                    created_at_human: "Just now",
+                    name: save.passkey.name
+                });
+              }
+            return save;
+            
+        } catch (e) {
+            return;
         }
-        return response;
+
       },
   },
 });

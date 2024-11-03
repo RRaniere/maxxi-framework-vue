@@ -14,10 +14,10 @@ async function getPasskeys() {
 
 }
 
-async function removePasskey(credentialId : string) { 
+async function removePasskey(name : string) { 
 
     try { 
-        const response = await fetchWrapper.post('/profile/passkey/remove', {credentialId});
+        const response = await fetchWrapper.post('/profile/passkey/remove', {name});
         return response
     } catch (error) {
         console.error(error);
@@ -28,10 +28,10 @@ async function removePasskey(credentialId : string) {
 }
 
 
-async function addPasskey(name : string) { 
+async function registerPasskey(name : string) { 
 
     try { 
-        const response = await fetchWrapper.post('/profile/passkey/add', {name});
+        const response = await fetchWrapper.post('/profile/passkey/register', {name});
         return response
     } catch (error) {
         console.error(error);
@@ -41,4 +41,17 @@ async function addPasskey(name : string) {
 
 }
 
-export { getPasskeys, removePasskey, addPasskey }
+async function savePasskey(name : string, passkey: string, options : string) { 
+
+    try { 
+        const response = await fetchWrapper.post('/profile/passkey/save', {name, passkey, options});
+        return response
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+
+
+}
+
+export { getPasskeys, removePasskey, registerPasskey, savePasskey }

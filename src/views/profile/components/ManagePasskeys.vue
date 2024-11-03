@@ -33,9 +33,9 @@ async function openDialog() {
 
 }
 
-async function handleRemovePasskey(credentialId : string) { 
+async function handleRemovePasskey(name: string) { 
 
-    const response = await passkeysStore.deletePasskey(credentialId);
+    const response = await passkeysStore.removePasskey(name);
     if(response.status) { 
         showSnackbar('success', response.message, "$checkboxMarkedCircleOutline");
     }
@@ -54,6 +54,7 @@ async function handleAddPasskey() {
     const response = await passkeysStore.addPasskey(passkeyName.value);
     isLoading.value = false;
     if(response.status) { 
+        passkeyName.value = '';
         showSnackbar('success', response.message, "$checkboxMarkedCircleOutline");
     }
     if(!response.status) { 
@@ -87,7 +88,6 @@ function showSnackbar(color: string, message: string, icon:string) {
 
 
 <v-dialog v-model="dialog" max-width="500">
-    <Form >
     <v-card>
       <v-card-item class="pa-5">
         <div class="text-h5"><SvgSprite name="custom-fingerprint" class="v-icon--start" style="width: 25px; height: 25px"/>Passkeys</div>
@@ -122,7 +122,7 @@ function showSnackbar(color: string, message: string, icon:string) {
                         <span class="text-subtitle-2 text-disabled font-weight-medium d-block">{{passkey.created_at_human}}</span>
                     </v-col>
                     <v-col cols="4">
-                        <v-btn color="error"  variant="flat" rounded="md" block @click="handleRemovePasskey(passkey.credential_id)">Remove</v-btn>
+                        <v-btn color="error"  variant="flat" rounded="md" block @click="handleRemovePasskey(passkey.name)">Remove</v-btn>
                     </v-col>
                 </v-row>
             </v-col>
@@ -138,8 +138,6 @@ function showSnackbar(color: string, message: string, icon:string) {
         <v-btn color="primary" block @click="dialog = false">Close</v-btn>
       </v-card-actions>
     </v-card>
-  </Form>
-
 </v-dialog>
 
 
