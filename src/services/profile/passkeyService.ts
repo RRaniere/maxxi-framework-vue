@@ -54,4 +54,29 @@ async function savePasskey(name : string, passkey: string, options : string) {
 
 }
 
-export { getPasskeys, removePasskey, registerPasskey, savePasskey }
+async function getAuthenticateOptions(username: string) { 
+
+    try { 
+        const response = await fetchWrapper.post('/login/passkey/authenticate-options', {username});
+        return response
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+
+}
+
+
+async function authenticate(answer: string, options:string) { 
+
+    try { 
+        const response = await fetchWrapper.post('/login/passkey/authenticate', {answer, options});
+        return response
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+
+}
+
+export { getPasskeys, removePasskey, registerPasskey, savePasskey, getAuthenticateOptions, authenticate }

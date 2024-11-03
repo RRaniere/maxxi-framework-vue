@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia';
 import { router } from '@/router';
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
+import { startAuthentication } from "@simplewebauthn/browser";
+import { getAuthenticateOptions, authenticate } from "@/services/profile/passkeyService";
+import { stringify } from 'querystring';
 
 
 export const useAuthStore = defineStore({
@@ -16,8 +19,31 @@ export const useAuthStore = defineStore({
     async login(username: string, password: string, totp: number | null = null) {
 
       const user = await fetchWrapper.post(`/login`, { username, password, totp }); 
+
+      
       if(user.status && user.two_factor_enabled) { 
         return user
+      }
+      if(user.status && user.passkey) { 
+
+        const options = await getAuthenticateOptions(username)
+
+        const optionsJSON = {
+            optionsJSON: options
+        };
+
+        const answer = await startAuthentication(optionsJSON);
+
+        const authentication = await authenticate(JSON.stringify(answer), JSON.stringify(options))
+
+        if(authentication.status) { 
+          this.user = authentication;
+          localStorage.setItem('user', JSON.stringify(authentication));
+          router.push(this.returnUrl || '/dashboard');
+        }
+
+        return true;
+
       }
       if(user.status) { 
         // update pinia state
