@@ -6,7 +6,7 @@ const MainRoutes = {
   meta: {
     requiresAuth: true
   },
-  redirect: '/main/dashboard/default',
+  redirect: '/dashboard',
   component: () => import('@/layouts/dashboard/DashboardLayout.vue'),
   children: [
     {

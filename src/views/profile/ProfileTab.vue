@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useProfileStore } from '@/stores/profileStore';
 import EmailVerification from '@/views/profile/components/EmailVerification.vue';
 import { requestEmailVerification } from '@/services/authentication/emailVerificationService';
-import { updatePersonalData } from '@/services/profile/profileService';
+import type { IPersonalData } from '@/interfaces/IPersonalData';
 
 const authStore = useAuthStore();
 const profileStore = useProfileStore();
@@ -21,7 +21,7 @@ const snackbar = ref(false);
 const snackbarMessage = ref('');
 const snackbarColor = ref('');
 const snackbarIcon = ref('');
-
+const profileData = ref<IPersonalData>();
 
 // Validation rules
 const rules = {
@@ -52,7 +52,7 @@ const isFormValid = computed(() => {
 async function submit() {
   isLoading.value = true;
 
-  profileStore.setUserData({
+  profileData.value = ({
     firstname: firstname.value,
     lastname: lastname.value,
     email: email.value,
@@ -71,19 +71,18 @@ async function submit() {
 }
 
 async function handleUpdatePersonalData(otp: number) {
-  const response = await updatePersonalData(otp);
 
-  if (response.status) {
-    showSnackbar('success', response.message, "$checkboxMarkedCircleOutline");
-    authStore.updateUserData({
-      firstName: profileStore.userData.firstname,
-      lastName: profileStore.userData.lastname,
-      email: profileStore.userData.email,
-    });
-    emailSent.value = false;
-  } else {
-    showSnackbar('error', response.message, "$closeCircle");
+  if (profileData.value) {
+    const response = await authStore.updateUserPersonalData(profileData.value, otp);
+
+    if (response.status) {
+      showSnackbar('success', response.message, "$checkboxMarkedCircleOutline");
+      emailSent.value = false;
+    } else {
+      showSnackbar('error', response.message, "$closeCircle");
+    }
   }
+  
 }
 
 function showSnackbar(color: string, message: string, icon:string) {

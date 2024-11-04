@@ -24,9 +24,9 @@ function request(method: string) {
       method,
       headers: authHeader(url)
     };
+    requestOptions.headers['Content-Type'] = 'application/json';
+    requestOptions.headers['Accept'] = 'application/json';
     if (body) {
-      requestOptions.headers['Content-Type'] = 'application/json';
-      requestOptions.headers['Accept'] = 'application/json';
       requestOptions.body = JSON.stringify(body);
     }
     return fetch(import.meta.env.VITE_API_URL + url, requestOptions).then(handleResponse);
@@ -54,8 +54,8 @@ function handleResponse(response: Response) {
     if (!response.ok) {
       const { user, logout } = useAuthStore();
       if ([401, 403].includes(response.status) && user) {
-        // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
         logout();
+        return;
       }
 
       const error: string = (data && data.message) || response.statusText;

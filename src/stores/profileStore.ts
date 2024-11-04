@@ -16,15 +16,9 @@ export const useProfileStore = defineStore('profile', {
     },
   }),
   actions: {
-    setUserData(data: UserData) {
+    updateUserData(data: UserData) {
       this.userData = data;
-    },
-    clearUserData() {
-      this.userData = {
-        firstname: '',
-        lastname: '',
-        email: '',
-      };
-    },
+    }
+   
   },
 });

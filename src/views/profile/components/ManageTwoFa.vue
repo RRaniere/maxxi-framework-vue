@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import EmailVerification from '@/views/profile/components/EmailVerification.vue';
 import { requestEmailVerification } from '@/services/authentication/emailVerificationService';
-import { requestTwoFaCredentials, enableTwoFa, disableTwoFa} from '@/services/profile/profileService';
+import { requestTwoFaCredentials, enableTwoFa, disableTwoFa} from '@/services/profile/twoFaService';
 import QrcodeVue from 'qrcode.vue';
 
 const authStore = useAuthStore();

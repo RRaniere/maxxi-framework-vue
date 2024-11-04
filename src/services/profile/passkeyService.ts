@@ -1,6 +1,5 @@
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
 
-
 async function getPasskeys() { 
 
     try { 
@@ -10,7 +9,6 @@ async function getPasskeys() {
         console.error(error);
         throw error;
     }
-
 
 }
 
@@ -23,7 +21,6 @@ async function removePasskey(name : string) {
         console.error(error);
         throw error;
     }
-
 
 }
 
@@ -38,7 +35,6 @@ async function registerPasskey(name : string) {
         throw error;
     }
 
-
 }
 
 async function savePasskey(name : string, passkey: string, options : string) { 
@@ -51,13 +47,12 @@ async function savePasskey(name : string, passkey: string, options : string) {
         throw error;
     }
 
-
 }
 
 async function getAuthenticateOptions(username: string) { 
 
     try { 
-        const response = await fetchWrapper.post('/login/passkey/authenticate-options', {username});
+        const response = await fetchWrapper.post('/passkey/authenticate-options', {username});
         return response
     } catch (error) {
         console.error(error);

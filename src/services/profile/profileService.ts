@@ -1,17 +1,17 @@
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
-import { useProfileStore } from '@/stores/profileStore';
-const profileStore = useProfileStore();
+import type { IPersonalData } from '@/interfaces/IPersonalData';
 
-async function updatePersonalData(otp:number) { 
+async function updatePersonalData(data: IPersonalData, otp:number) { 
+
+    const { firstname, lastname, email } = data;
 
     try { 
-        const response = await fetchWrapper.post('/profile/personal-data', { ...profileStore.userData, otp });
+        const response = await fetchWrapper.post('/profile/personal-data', { firstname, lastname, email, otp });
         return response
     } catch (error) {
         console.error(error);
         throw error;
     }
-
 
 }
 
@@ -28,42 +28,5 @@ async function updateFinancialData(data : any, otp:number) {
 
 }
 
-async function requestTwoFaCredentials(otp:number) { 
 
-    try { 
-        const response = await fetchWrapper.post('/profile/request-two-factor-credentials', {otp});
-        return response
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
-
-
-}
-
-
-async function enableTwoFa(secret:string) { 
-
-    try { 
-        const response = await fetchWrapper.post('/profile/enable-two-factor', {secret});
-        return response
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
-}
-
-
-async function disableTwoFa(otp:number) { 
-
-    try { 
-        const response = await fetchWrapper.post('/profile/disable-two-factor', {otp});
-        return response
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
-}
-
-
-export { updatePersonalData, updateFinancialData, requestTwoFaCredentials, enableTwoFa, disableTwoFa}
+export { updatePersonalData, updateFinancialData}

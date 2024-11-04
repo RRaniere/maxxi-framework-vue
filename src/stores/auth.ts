@@ -3,7 +3,8 @@ import { router } from '@/router';
 import { fetchWrapper } from '@/utils/helpers/fetch-wrapper';
 import { startAuthentication } from "@simplewebauthn/browser";
 import { getAuthenticateOptions, authenticate } from "@/services/profile/passkeyService";
-import { stringify } from 'querystring';
+import { updatePersonalData } from "@/services/profile/profileService";
+import type { IPersonalData } from '@/interfaces/IPersonalData';
 
 
 export const useAuthStore = defineStore({
@@ -59,18 +60,34 @@ export const useAuthStore = defineStore({
     },
     async logout() {
 
-      const logout = await fetchWrapper.post(`/logout`);
+      try{ 
+        const logout = await fetchWrapper.post(`/logout`);
+      }catch(e){ 
+        router.push('/login');
+        return;
+      }
 
       this.user = null;
       localStorage.removeItem('user');
       router.push('/login');
-    },
-    updateUserData(data: { firstName: string; lastName: string; email: string }) {
-        this.user.user.first_name = data.firstName;
-        this.user.user.last_name = data.lastName;
-        this.user.user.email = data.email;
 
-        localStorage.setItem('user', JSON.stringify(this.user));
+    },
+    async updateUserPersonalData(data: IPersonalData, otp: number) {
+
+        const update = await updatePersonalData(data, otp)
+
+        if(update.status) { 
+
+          this.user.user.first_name = data.firstname;
+          this.user.user.last_name = data.lastname;
+          this.user.user.email = data.email;
+          localStorage.setItem('user', JSON.stringify(this.user)); 
+
+          return update;
+        }
+
+        return false;
+       
     },
     updateFinancialData(data: { btcAddress: string; usdtAddress: string; ethAddress: string }) {
       this.user.user.btc_address = data.btcAddress;
