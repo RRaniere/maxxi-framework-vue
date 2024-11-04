@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import EmailVerification from '@/views/profile/components/EmailVerification.vue';
 import { requestEmailVerification } from '@/services/authentication/emailVerificationService';
@@ -36,7 +36,6 @@ async function handleRequestEmailVerification(optionParam:string) {
     }
 
 }
-
 
 async function handleRequestOption(otp:number) { 
 
@@ -78,10 +77,7 @@ try {
   const response = await enableTwoFa(twoFactorSecret.value);
   if (response.status) {
       showSnackbar('success', response.message, "$checkboxMarkedCircleOutline");
-      dialog.value = false
-      emailSent.value = false
-      twoFactorQrCode.value = '';
-      twoFactorSecret.value = '';
+      cleanComponent()
       authStore.updateTwoFa(true);
   }
 } catch (error) {
@@ -100,11 +96,9 @@ try {
   const response = await disableTwoFa(otp);
   if (response.status) {
       showSnackbar('success', response.message, "$checkboxMarkedCircleOutline");
+      cleanComponent()
+
       dialog.value = false
-      emailSent.value = false
-      dialog.value = false
-      twoFactorQrCode.value = '';
-      twoFactorSecret.value = '';
       authStore.updateTwoFa(false);
   }
 
@@ -125,6 +119,19 @@ function showSnackbar(color: string, message: string, icon:string) {
   snackbarIcon.value = icon
 }
 
+function cleanComponent() { 
+  dialog.value = false
+  emailSent.value = false
+  twoFactorQrCode.value = '';
+  twoFactorSecret.value = '';
+
+}
+
+watch(dialog, (newVal) => {
+  if (!newVal) {
+    cleanComponent();
+  }
+});
 </script>
 
 <template> 
@@ -153,7 +160,7 @@ function showSnackbar(color: string, message: string, icon:string) {
         <EmailVerification  @codeFilled="handleRequestOption" v-if="emailSent && !twoFactorQrCode"/>
         <v-row v-if="twoFactorQrCode != ''" class="d-flex justify-center">
             <v-col cols="12" md="9" lg="9" >
-                <div class="text-h5"><SvgSprite name="custom-shield" class="v-icon--start" style="width: 25px; height: 25px"/>Enable 2FA Authenticator</div>
+                <div class="text-h5">Enable 2FA Authenticator</div>
                 <span class="text-subtitle-1 text-disabled font-weight-medium d-block">Scan this QR code in the Authenticator App.</span>
             </v-col>
 
@@ -168,9 +175,9 @@ function showSnackbar(color: string, message: string, icon:string) {
             </div>
             </v-col>
             <v-col cols="8" class="">
-                <v-text-field color="primary" label="Website" variant="outlined"
+                <v-text-field color="primary"  variant="outlined"
                     density="comfortable" single-line hide-details v-model="twoFactorSecret"
-                    class="center-text">
+                    class="text-center">
                     <template v-slot:append-inner>
                         <v-btn variant="text" aria-label="copy" icon rounded="md"
                             @click="">
@@ -209,5 +216,13 @@ function showSnackbar(color: string, message: string, icon:string) {
 
 
 </template>
+
+<style> 
+
+.text-center .v-input__control .v-field__input {
+    text-align: center;
+}
+
+</style>
 
 

@@ -5,6 +5,7 @@ import { startAuthentication } from "@simplewebauthn/browser";
 import { getAuthenticateOptions, authenticate } from "@/services/profile/passkeyService";
 import { updatePersonalData } from "@/services/profile/profileService";
 import type { IPersonalData } from '@/interfaces/IPersonalData';
+import { message } from '@/layouts/dashboard/vertical-header/data';
 
 
 export const useAuthStore = defineStore({
@@ -25,27 +26,37 @@ export const useAuthStore = defineStore({
       if(user.status && user.two_factor_enabled) { 
         return user
       }
+
       if(user.status && user.passkey) { 
 
-        const options = await getAuthenticateOptions(username)
+        try{
 
-        const optionsJSON = {
-            optionsJSON: options
-        };
+          const options = await getAuthenticateOptions(username)
 
-        const answer = await startAuthentication(optionsJSON);
+          const optionsJSON = {
+              optionsJSON: options
+          };
 
-        const authentication = await authenticate(JSON.stringify(answer), JSON.stringify(options))
+          const answer = await startAuthentication(optionsJSON);
 
-        if(authentication.status) { 
-          this.user = authentication;
-          localStorage.setItem('user', JSON.stringify(authentication));
-          router.push(this.returnUrl || '/dashboard');
+          const authentication = await authenticate(JSON.stringify(answer), JSON.stringify(options))
+
+          if(authentication.status) { 
+            this.user = authentication;
+            localStorage.setItem('user', JSON.stringify(authentication));
+            router.push(this.returnUrl || '/dashboard');
+          } 
+
+          return true;
+
+        } catch(error) { 
+
+            throw new Error("Something went wrong with your passkeys.");
+
         }
 
-        return true;
-
       }
+      
       if(user.status) { 
         // update pinia state
         this.user = user;
